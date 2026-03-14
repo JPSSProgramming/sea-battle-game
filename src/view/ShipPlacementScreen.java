@@ -3,6 +3,7 @@ package src.view;
 import src.model.Cell;
 import src.model.Player;
 import src.model.Ship;
+import src.model.ShipPlacementValidator;
 import src.utils.Utils;
 
 import javax.swing.*;
