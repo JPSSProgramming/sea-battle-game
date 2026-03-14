@@ -2,6 +2,7 @@ package src.view;
 
 import src.model.Player;
 import src.model.Ship;
+import src.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
