@@ -13,7 +13,7 @@ public class GameWithPlayer {
         this.player1 = new Player("player 1");
         this.player2 = new Player("player 2");
 
-//        new ShipPlacementScreen(player1, () -> {
+        new ShipPlacementScreen(player1, () -> {
 //            new ShipPlacementScreen(player2, () -> {
 //                GameLogic logic = new GameLogic(player1, player2);
 //                new GameWindow(logic, false); // vsAI = false
