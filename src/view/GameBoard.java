@@ -16,7 +16,7 @@ public class GameBoard extends JPanel {
     private boolean showShips = true;
 
 
-    List<Cell> previewCells = null;
+    public List<Cell> previewCells = null;
 
     public GameBoard() {
 
