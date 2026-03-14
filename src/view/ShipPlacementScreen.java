@@ -1,5 +1,6 @@
 package src.view;
 
+import src.model.Cell;
 import src.model.Player;
 import src.model.Ship;
 import src.utils.Utils;

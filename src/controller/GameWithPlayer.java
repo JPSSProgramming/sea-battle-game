@@ -16,7 +16,7 @@ public class GameWithPlayer {
         new ShipPlacementScreen(player1, () -> {
             new ShipPlacementScreen(player2, () -> {
                 GameLogic logic = new GameLogic(player1, player2);
-                new GameWindow(logic, false); // vsAI = false
+                new GameWindow(logic, false);
             });
         });
     }
