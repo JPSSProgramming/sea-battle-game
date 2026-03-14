@@ -16,23 +16,15 @@ public class Player {
         this.ships = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public GameBoard getBoard() { return board; }
+    public List<Ship> getShips() { return ships; }
 
-    public GameBoard getBoard() {
-        return board;
-    }
-
-    public List<Ship> getShips() {
-        return ships;
-    }
-
-    public void addShip(Ship ship) {
-        ships.add(ship);
-    }
+    public void addShip(Ship ship) { ships.add(ship); }
 
     public boolean hasLost() {
+        if (ships.isEmpty()) return false;
+
         for (Ship s : ships) {
             if (!s.isSunk()) return false;
         }
