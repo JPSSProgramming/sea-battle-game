@@ -1,4 +1,4 @@
-package src.model;
+package org.sea.battle.game.model;
 
 import java.util.ArrayList;
 import java.util.List;

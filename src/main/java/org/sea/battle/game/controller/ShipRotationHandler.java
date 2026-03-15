@@ -1,10 +1,10 @@
-//package src.controller;
+//package org.sea.battle.game.controller;
 //
-//import src.model.Cell;
-//import src.model.Ship;
-//import src.model.ShipPlacementValidator;
-//import src.utils.Utils;
-//import src.view.GameBoard;
+//import org.sea.battle.game.model.Cell;
+//import org.sea.battle.game.model.Ship;
+//import org.sea.battle.game.model.ShipPlacementValidator;
+//import org.sea.battle.game.utils.Utils;
+//import org.sea.battle.game.view.GameBoard;
 //
 //import java.util.ArrayList; import java.util.List;
 //
