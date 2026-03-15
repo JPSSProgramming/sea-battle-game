@@ -1,10 +1,10 @@
-package src.controller;
+package org.sea.battle.game.controller;
 
-import src.model.AI;
-import src.model.Player;
-import src.view.GameWindow;
-import src.view.ShipPlacementScreen;
-import src.model.GameLogic;
+import org.sea.battle.game.model.AI;
+import org.sea.battle.game.model.Player;
+import org.sea.battle.game.view.GameWindow;
+import org.sea.battle.game.view.ShipPlacementScreen;
+import org.sea.battle.game.model.GameLogic;
 
 public class GameWithAI {
     public GameWithAI() {

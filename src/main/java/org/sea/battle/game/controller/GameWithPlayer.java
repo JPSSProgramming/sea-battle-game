@@ -1,9 +1,9 @@
-package src.controller;
+package org.sea.battle.game.controller;
 
-import src.model.GameLogic;
-import src.model.Player;
-import src.view.GameWindow;
-import src.view.ShipPlacementScreen;
+import org.sea.battle.game.model.GameLogic;
+import org.sea.battle.game.model.Player;
+import org.sea.battle.game.view.GameWindow;
+import org.sea.battle.game.view.ShipPlacementScreen;
 
 public class GameWithPlayer {
     private final Player player1;
