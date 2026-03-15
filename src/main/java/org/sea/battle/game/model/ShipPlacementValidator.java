@@ -1,7 +1,7 @@
-package src.model;
+package org.sea.battle.game.model;
 
-import src.utils.Utils;
-import src.view.GameBoard;
+import org.sea.battle.game.utils.Utils;
+import org.sea.battle.game.view.GameBoard;
 
 import java.util.List;
 
