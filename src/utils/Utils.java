@@ -1,4 +1,4 @@
-package org.sea.battle.game.utils;
+package src.utils;
 
 public class Utils {
     public static final int BOARD_SIZE = 10;

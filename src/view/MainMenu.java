@@ -1,6 +1,6 @@
-package org.sea.battle.game.view;
-import org.sea.battle.game.controller.GameWithAI;
-import org.sea.battle.game.controller.GameWithPlayer;
+package src.view;
+import src.controller.GameWithAI;
+import src.controller.GameWithPlayer;
 
 import javax.swing.*;
 import java.awt.*;

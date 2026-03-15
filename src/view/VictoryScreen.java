@@ -1,4 +1,4 @@
-package org.sea.battle.game.view;
+package src.view;
 
 public class VictoryScreen {
 //    На майбутнє

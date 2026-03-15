@@ -1,6 +1,6 @@
-package org.sea.battle.game.model;
+package src.model;
 
-import org.sea.battle.game.utils.Utils;
+import src.utils.Utils;
 
 import java.awt.*;
 

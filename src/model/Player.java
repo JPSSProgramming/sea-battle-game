@@ -1,6 +1,6 @@
-package org.sea.battle.game.model;
+package src.model;
 
-import org.sea.battle.game.view.GameBoard;
+import src.view.GameBoard;
 
 import java.util.ArrayList;
 import java.util.List;

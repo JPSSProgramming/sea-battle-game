@@ -1,7 +1,7 @@
-package org.sea.battle.game.view;
+package src.view;
 
-import org.sea.battle.game.model.*;
-import org.sea.battle.game.utils.Utils;
+import src.model.*;
+import src.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
