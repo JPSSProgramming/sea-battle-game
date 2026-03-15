@@ -1,4 +1,4 @@
-package org.sea.battle.game.model;
+package src.model;
 
 public class GameLogic {
     private final Player player1;
