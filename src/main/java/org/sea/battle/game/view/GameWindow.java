@@ -57,7 +57,10 @@ public class GameWindow extends JFrame {
                 updateStatus(hit ? "Влучив!" : "Промах.");
 
                 Player winner = logic.checkWinner();
-                if (winner != null) endWithWinner(winner);
+                if (winner != null) {
+                    endWithWinner(winner);
+                    return;
+                }
 
                 playAITurnsIfNeeded();
             }
@@ -66,7 +69,6 @@ public class GameWindow extends JFrame {
         rightBoard.addMouseListener(listener);
 
         setVisible(true);
-
         playAITurnsIfNeeded();
     }
 
@@ -101,14 +103,17 @@ public class GameWindow extends JFrame {
             updateStatus(hit ? "AI влучив!" : "AI промахнувся.");
 
             Player winner = logic.checkWinner();
-            if (winner != null) { endWithWinner(winner); return; }
+            if (winner != null) {
+                endWithWinner(winner);
+                return;
+            }
 
             if (!hit) break;
         }
     }
+
     private void endWithWinner(Player winner) {
-        JOptionPane.showMessageDialog(this, winner.getName() + " переміг!");
-        dispose();
-        new MainMenu();
+        this.dispose();
+        new VictoryScreen(winner, vsAI);
     }
 }
