@@ -59,12 +59,24 @@ public class GameBoard extends JPanel {
         repaint();
     }
 
-    public List<Ship> getShips() { return ships; }
+    public List<Ship> getShips() {
+        return ships;
+    }
 
-    public void setShowShips(boolean v) { this.showShips = v; repaint(); }
+    public void setShowShips(boolean v) {
+        this.showShips = v;
+        repaint();
+    }
 
-    public void setPreviewCells(List<Cell> preview) { this.previewCells = preview; repaint(); }
-    public void clearPreview() { this.previewCells = null; repaint(); }
+    public void setPreviewCells(List<Cell> preview) {
+        this.previewCells = preview;
+        repaint();
+    }
+
+    public void clearPreview() {
+        this.previewCells = null;
+        repaint();
+    }
 
     public void setHoverCell(int x, int y) {
         if (hoverX == x && hoverY == y) return;
@@ -73,7 +85,9 @@ public class GameBoard extends JPanel {
         repaint();
     }
 
-    public void clearHover() { setHoverCell(-1, -1); }
+    public void clearHover() {
+        setHoverCell(-1, -1);
+    }
 
     public Ship findShipAt(int x, int y) {
         for (Ship s : ships) {

@@ -2,7 +2,10 @@ package org.sea.battle.game.model;
 
 public class GameLogic {
 
-    public enum ShotResult { MISS, HIT, SUNK }
+    public enum ShotResult {MISS, HIT, SUNK}
+
+    public record ShotOutcome(ShotResult result, Ship sunkShip) {
+    }
 
     private final Player player1;
     private final Player player2;
@@ -22,28 +25,40 @@ public class GameLogic {
         this.salvoMode = salvoMode;
     }
 
-    public Player getPlayer1() { return player1; }
-    public Player getPlayer2() { return player2; }
+    public Player getPlayer1() {
+        return player1;
+    }
 
-    public Player getCurrentPlayer() { return currentPlayer; }
-    public Player getOpponent() { return opponent; }
+    public Player getPlayer2() {
+        return player2;
+    }
 
-    public boolean isSalvoMode() { return salvoMode; }
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public Player getOpponent() {
+        return opponent;
+    }
+
+    public boolean isSalvoMode() {
+        return salvoMode;
+    }
 
     public int shotsPerTurn() {
         return salvoMode ? Math.max(1, currentPlayer.remainingShipsCount()) : 1;
     }
 
-    public ShotResult shoot(int x, int y) {
+    public ShotOutcome shoot(int x, int y) {
         boolean hit = opponent.getBoard().shoot(x, y);
-        if (!hit) return ShotResult.MISS;
+        if (!hit) return new ShotOutcome(ShotResult.MISS, null);
 
         Ship ship = opponent.getBoard().findShipAt(x, y);
         if (ship != null) {
             ship.markSunkIfNeeded();
-            if (ship.isSunk()) return ShotResult.SUNK;
+            if (ship.isSunk()) return new ShotOutcome(ShotResult.SUNK, ship);
         }
-        return ShotResult.HIT;
+        return new ShotOutcome(ShotResult.HIT, null);
     }
 
     public void endTurn() {

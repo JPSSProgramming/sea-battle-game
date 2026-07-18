@@ -7,8 +7,12 @@ public enum Difficulty {
 
     private final String label;
 
-    Difficulty(String label) { this.label = label; }
+    Difficulty(String label) {
+        this.label = label;
+    }
 
     @Override
-    public String toString() { return label; }
+    public String toString() {
+        return label;
+    }
 }

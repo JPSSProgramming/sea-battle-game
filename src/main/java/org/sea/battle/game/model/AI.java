@@ -19,9 +19,13 @@ public class AI extends Player {
         this.difficulty = difficulty;
     }
 
-    public Difficulty getDifficulty() { return difficulty; }
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
 
-    private static String key(int x, int y) { return x + "," + y; }
+    private static String key(int x, int y) {
+        return x + "," + y;
+    }
 
     public int[] pickTarget(GameBoard enemyBoard) {
         if (difficulty != Difficulty.EASY) {
@@ -47,6 +51,7 @@ public class AI extends Player {
             }
         }
         if (candidates.isEmpty()) {
+
             for (int x = 0; x < Utils.BOARD_SIZE; x++) {
                 for (int y = 0; y < Utils.BOARD_SIZE; y++) {
                     if (!tried.contains(key(x, y))) candidates.add(new int[]{x, y});
@@ -111,7 +116,11 @@ public class AI extends Player {
     }
 
     public void autoPlaceShips() {
-        for (int size : Utils.SHIP_SIZES) {
+        autoPlaceShips(Utils.SHIP_SIZES);
+    }
+
+    public void autoPlaceShips(int[] fleet) {
+        for (int size : fleet) {
             boolean placed = false;
             int attempts = 0;
             while (!placed && attempts < 10000) {
@@ -124,7 +133,10 @@ public class AI extends Player {
                 for (int i = 0; i < size; i++) {
                     int nx = horizontal ? x + i : x;
                     int ny = horizontal ? y : y + i;
-                    if (!Utils.inBounds(nx, ny)) { cand.clear(); break; }
+                    if (!Utils.inBounds(nx, ny)) {
+                        cand.clear();
+                        break;
+                    }
                     cand.add(getBoard().getCell(nx, ny));
                 }
                 if (!cand.isEmpty() && ShipPlacementValidator.canPlaceShip(getBoard(), cand)) {

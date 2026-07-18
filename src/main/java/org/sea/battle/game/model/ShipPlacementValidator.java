@@ -29,8 +29,8 @@ public class ShipPlacementValidator {
     private static boolean hasNeighborShip(GameBoard board, Cell cell) {
         int[][] dirs = {
                 {-1, -1}, {-1, 0}, {-1, 1},
-                {0, -1},           {0, 1},
-                {1, -1},  {1, 0},  {1, 1}
+                {0, -1}, {0, 1},
+                {1, -1}, {1, 0}, {1, 1}
         };
 
         for (int[] d : dirs) {

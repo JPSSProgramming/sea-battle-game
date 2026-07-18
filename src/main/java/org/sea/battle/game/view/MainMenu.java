@@ -3,6 +3,7 @@ package org.sea.battle.game.view;
 import org.sea.battle.game.controller.GameWithAI;
 import org.sea.battle.game.controller.GameWithPlayer;
 import org.sea.battle.game.model.Difficulty;
+import org.sea.battle.game.utils.ProgressStore;
 import org.sea.battle.game.utils.Theme;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ public class MainMenu extends JFrame {
 
     public MainMenu() {
         setTitle("Морський бій");
-        setSize(460, 420);
+        setSize(460, 560);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -31,29 +32,47 @@ public class MainMenu extends JFrame {
         subtitle.setFont(Theme.FONT_BODY);
         subtitle.setForeground(Theme.TEXT_MUTED);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        subtitle.setBorder(new EmptyBorder(0, 0, 28, 0));
 
-        JButton playAI = Theme.styledButton("Гра проти комп'ютера", Theme.ACCENT_DARK);
+        JLabel coins = new JLabel("\uD83E\uDE99 " + ProgressStore.get().getCoins() + " монет", SwingConstants.CENTER);
+        coins.setFont(Theme.FONT_HEADING);
+        coins.setForeground(Theme.WARNING);
+        coins.setAlignmentX(Component.CENTER_ALIGNMENT);
+        coins.setBorder(new EmptyBorder(6, 0, 24, 0));
+
+        JButton campaign = Theme.styledButton("Кампанія (рівні)", Theme.ACCENT_DARK);
+        JButton shop = Theme.styledButton("Магазин кораблів", Theme.WARNING.darker());
+        JButton playAI = Theme.styledButton("Швидка гра проти комп'ютера", Theme.BG_PANEL_LIGHT);
         JButton playFriend = Theme.styledButton("Гра з другом (2 гравці)", Theme.BG_PANEL_LIGHT);
         JButton exit = Theme.styledButton("Вихід", new Color(90, 30, 30));
 
-        playAI.setAlignmentX(Component.CENTER_ALIGNMENT);
-        playFriend.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exit.setAlignmentX(Component.CENTER_ALIGNMENT);
-        playAI.setMaximumSize(new Dimension(320, 52));
-        playFriend.setMaximumSize(new Dimension(320, 52));
-        exit.setMaximumSize(new Dimension(320, 52));
+        for (JButton b : new JButton[]{campaign, shop, playAI, playFriend, exit}) {
+            b.setAlignmentX(Component.CENTER_ALIGNMENT);
+            b.setMaximumSize(new Dimension(320, 52));
+        }
 
+        campaign.addActionListener(e -> {
+            dispose();
+            new CampaignScreen();
+        });
+        shop.addActionListener(e -> {
+            dispose();
+            new ShopScreen();
+        });
         playAI.addActionListener(e -> showAiSetupDialog());
         playFriend.addActionListener(e -> showPvpSetupDialog());
         exit.addActionListener(e -> System.exit(0));
 
         content.add(title);
         content.add(subtitle);
+        content.add(coins);
+        content.add(campaign);
+        content.add(Box.createVerticalStrut(12));
+        content.add(shop);
+        content.add(Box.createVerticalStrut(20));
         content.add(playAI);
-        content.add(Box.createVerticalStrut(14));
+        content.add(Box.createVerticalStrut(12));
         content.add(playFriend);
-        content.add(Box.createVerticalStrut(14));
+        content.add(Box.createVerticalStrut(20));
         content.add(exit);
 
         add(content, BorderLayout.CENTER);

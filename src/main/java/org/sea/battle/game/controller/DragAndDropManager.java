@@ -10,7 +10,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class DragAndDropManager extends MouseAdapter {
 
     private Ship selectedShip;
@@ -53,7 +52,11 @@ public class DragAndDropManager extends MouseAdapter {
         List<Cell> old = backupCells;
         boolean horizontal = true;
         int y0 = old.get(0).getY();
-        for (Cell c : old) if (c.getY() != y0) { horizontal = false; break; }
+        for (Cell c : old)
+            if (c.getY() != y0) {
+                horizontal = false;
+                break;
+            }
 
         List<Cell> newCells = new ArrayList<>();
         for (int i = 0; i < old.size(); i++) {

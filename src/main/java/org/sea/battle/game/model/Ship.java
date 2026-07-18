@@ -19,9 +19,13 @@ public record Ship(List<Cell> cells) {
         for (Cell c : this.cells) c.setShip(true);
     }
 
-    public int size() { return cells.size(); }
+    public int size() {
+        return cells.size();
+    }
 
-    public String typeName() { return Utils.shipTypeName(cells.size()); }
+    public String typeName() {
+        return Utils.shipTypeName(cells.size());
+    }
 
     public boolean isSunk() {
         for (Cell c : cells) {

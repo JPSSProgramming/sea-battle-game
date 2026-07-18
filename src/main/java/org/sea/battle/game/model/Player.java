@@ -16,11 +16,21 @@ public class Player {
         this.ships = new ArrayList<>();
     }
 
-    public String getName() { return name; }
-    public GameBoard getBoard() { return board; }
-    public List<Ship> getShips() { return ships; }
+    public String getName() {
+        return name;
+    }
 
-    public void addShip(Ship ship) { ships.add(ship); }
+    public GameBoard getBoard() {
+        return board;
+    }
+
+    public List<Ship> getShips() {
+        return ships;
+    }
+
+    public void addShip(Ship ship) {
+        ships.add(ship);
+    }
 
     public boolean hasLost() {
         if (ships.isEmpty()) return false;

@@ -25,17 +25,23 @@ public class ShipPlacementScreen extends JFrame {
 
     private final Map<Integer, Integer> remainingBySize = new LinkedHashMap<>();
     private final Random random = new Random();
+    private final int fleetSize;
 
     private int currentSize = -1;
     private boolean placingHorizontal = true;
 
     public ShipPlacementScreen(Player player, Runnable onFinished) {
+        this(player, Utils.SHIP_SIZES, onFinished);
+    }
+
+    public ShipPlacementScreen(Player player, int[] fleet, Runnable onFinished) {
         super("Розстановка — " + player.getName());
         this.player = player;
         this.board = player.getBoard();
         this.placedShips = new ArrayList<>();
+        this.fleetSize = fleet.length;
 
-        for (int sz : Utils.SHIP_SIZES) {
+        for (int sz : fleet) {
             remainingBySize.merge(sz, 1, Integer::sum);
         }
 
@@ -216,7 +222,7 @@ public class ShipPlacementScreen extends JFrame {
     }
 
     private void updateInstructions() {
-        int total = Utils.SHIP_SIZES.length;
+        int total = fleetSize;
         instr.setText(currentSize > 0
                 ? "Розміщується: " + Utils.shipTypeName(currentSize) + " (розмір " + currentSize + "). Розставлено кораблів: "
                 + placedShips.size() + " з " + total
