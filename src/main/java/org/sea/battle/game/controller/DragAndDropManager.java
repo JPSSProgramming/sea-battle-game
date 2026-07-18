@@ -6,20 +6,20 @@ import org.sea.battle.game.model.ShipPlacementValidator;
 import org.sea.battle.game.utils.Utils;
 import org.sea.battle.game.view.GameBoard;
 
-
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+
 
 public class DragAndDropManager extends MouseAdapter {
 
     private Ship selectedShip;
-    private java.util.List<Cell> backupCells;
+    private List<Cell> backupCells;
     private int anchorX;
     private int anchorY;
-    private java.util.List<Cell> previewCells;
-    private final GameBoard board; private final List<Ship> ships;
+    private final GameBoard board;
+    private final List<Ship> ships;
+
     public DragAndDropManager(GameBoard board, List<Ship> ships) {
         this.board = board;
         this.ships = ships;
@@ -50,12 +50,12 @@ public class DragAndDropManager extends MouseAdapter {
         int dx = gx - anchorX;
         int dy = gy - anchorY;
 
-        List<Cell> newCells = new ArrayList<>();
         List<Cell> old = backupCells;
         boolean horizontal = true;
         int y0 = old.get(0).getY();
         for (Cell c : old) if (c.getY() != y0) { horizontal = false; break; }
 
+        List<Cell> newCells = new ArrayList<>();
         for (int i = 0; i < old.size(); i++) {
             int nx = (horizontal ? old.get(0).getX() + i : old.get(0).getX()) + dx;
             int ny = (horizontal ? old.get(0).getY() : old.get(0).getY() + i) + dy;
@@ -73,15 +73,16 @@ public class DragAndDropManager extends MouseAdapter {
     public void mouseReleased(MouseEvent e) {
         if (selectedShip == null) return;
         List<Cell> newCells = board.previewCells;
+
         if (newCells != null && ShipPlacementValidator.canPlaceShip(board, newCells)) {
             selectedShip.setCells(newCells);
-            board.getShips().add(selectedShip);
         } else {
             selectedShip.setCells(backupCells);
         }
+
         board.clearPreview();
+        board.repaint();
         selectedShip = null;
         backupCells = null;
     }
-
 }

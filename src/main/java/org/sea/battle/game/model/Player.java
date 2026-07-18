@@ -30,4 +30,10 @@ public class Player {
         }
         return true;
     }
+
+    public int remainingShipsCount() {
+        int count = 0;
+        for (Ship s : ships) if (!s.isSunk()) count++;
+        return count;
+    }
 }
