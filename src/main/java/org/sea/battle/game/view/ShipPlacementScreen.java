@@ -1,21 +1,32 @@
 package org.sea.battle.game.view;
 
+import org.sea.battle.game.controller.DragAndDropManager;
+import org.sea.battle.game.controller.ShipRotationHandler;
 import org.sea.battle.game.model.*;
+import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class ShipPlacementScreen extends JFrame {
     private final Player player;
     private final GameBoard board;
     private final List<Ship> placedShips;
     private final JPanel reservePanel;
-    private Ship currentPlacing;
-    private int currentSize;
+    private final JLabel instr;
+
+    private final Map<Integer, Integer> remainingBySize = new LinkedHashMap<>();
+    private final Random random = new Random();
+
+    private int currentSize = -1;
     private boolean placingHorizontal = true;
 
     public ShipPlacementScreen(Player player, Runnable onFinished) {
@@ -24,42 +35,85 @@ public class ShipPlacementScreen extends JFrame {
         this.board = player.getBoard();
         this.placedShips = new ArrayList<>();
 
+        for (int sz : Utils.SHIP_SIZES) {
+            remainingBySize.merge(sz, 1, Integer::sum);
+        }
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        Theme.styleFrame(this);
+        getContentPane().setBackground(Theme.BG_DARK);
 
         reservePanel = new JPanel();
         reservePanel.setLayout(new BoxLayout(reservePanel, BoxLayout.Y_AXIS));
-        reservePanel.setBorder(BorderFactory.createTitledBorder("Резерв"));
+        reservePanel.setBackground(Theme.BG_PANEL);
+        reservePanel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createEmptyBorder(8, 8, 8, 8), "Резерв кораблів"));
+        rebuildReservePanel();
 
-        for (int sz : Utils.SHIP_SIZES) {
-            reservePanel.add(createReserveShipComponent(sz));
-        }
+        JPanel boardWrap = new JPanel(new GridBagLayout());
+        boardWrap.setBackground(Theme.BG_DARK);
+        boardWrap.setBorder(new EmptyBorder(16, 16, 16, 16));
+        boardWrap.add(board);
 
         add(reservePanel, BorderLayout.WEST);
-        add(board, BorderLayout.CENTER);
+        add(boardWrap, BorderLayout.CENTER);
 
-        JLabel instr = new JLabel("R - повернути, Клік - поставити. Потрібно: " + Utils.SHIP_SIZES.length, SwingConstants.CENTER);
-        add(instr, BorderLayout.SOUTH);
+        JPanel south = new JPanel();
+        south.setLayout(new BoxLayout(south, BoxLayout.Y_AXIS));
+        south.setBackground(Theme.BG_PANEL);
+        south.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        instr = new JLabel("", SwingConstants.CENTER);
+        instr.setFont(Theme.FONT_BODY);
+        instr.setForeground(Theme.TEXT_PRIMARY);
+        instr.setAlignmentX(Component.CENTER_ALIGNMENT);
+        updateInstructions();
+
+        JLabel help = new JLabel(
+                "R — повернути перед постановкою · Клік ПКМ по кораблю — повернути · Перетягніть корабель мишею, щоб переставити",
+                SwingConstants.CENTER);
+        help.setFont(Theme.FONT_MONO);
+        help.setForeground(Theme.TEXT_MUTED);
+        help.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton randomize = Theme.styledButton("Розставити випадково", Theme.BG_PANEL_LIGHT);
+        randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
+        randomize.addActionListener(e -> randomizeRemaining(onFinished));
+
+        south.add(instr);
+        south.add(Box.createVerticalStrut(4));
+        south.add(help);
+        south.add(Box.createVerticalStrut(8));
+        south.add(randomize);
+        add(south, BorderLayout.SOUTH);
+
+        new DragAndDropManager(board, placedShips);
+        ShipRotationHandler rotationHandler = new ShipRotationHandler(board);
 
         board.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (currentPlacing == null) return;
+                if (currentSize <= 0) return;
                 int gx = e.getX() / Utils.CELL_SIZE;
                 int gy = e.getY() / Utils.CELL_SIZE;
                 List<Cell> cand = candidateCellsForPlacement(gx, gy, currentSize, placingHorizontal);
-                if (cand != null && ShipPlacementValidator.canPlaceShip(board, cand)) {
-                    board.setPreviewCells(cand);
-                } else {
-                    board.setPreviewCells(null);
-                }
+                board.setPreviewCells(cand);
             }
         });
 
         board.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (currentPlacing == null) return;
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int gx = e.getX() / Utils.CELL_SIZE;
+                    int gy = e.getY() / Utils.CELL_SIZE;
+                    Ship existing = board.findShipAt(gx, gy);
+                    if (existing != null) rotationHandler.rotate(existing);
+                    return;
+                }
+
+                if (currentSize <= 0) return;
                 int gx = e.getX() / Utils.CELL_SIZE;
                 int gy = e.getY() / Utils.CELL_SIZE;
                 List<Cell> cand = candidateCellsForPlacement(gx, gy, currentSize, placingHorizontal);
@@ -70,14 +124,13 @@ public class ShipPlacementScreen extends JFrame {
                     player.addShip(s);
                     placedShips.add(s);
 
-                    removeOneFromReserve(currentSize);
-                    currentPlacing = null;
+                    consumeOneFromReserve(currentSize);
+                    currentSize = -1;
                     board.clearPreview();
+                    updateInstructions();
 
                     if (isAllPlaced()) {
-                        board.setShowShips(false);
-                        dispose();
-                        onFinished.run();
+                        finish(onFinished);
                     }
                 }
             }
@@ -86,7 +139,10 @@ public class ShipPlacementScreen extends JFrame {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_R) placingHorizontal = !placingHorizontal;
+                if (e.getKeyCode() == KeyEvent.VK_R) {
+                    placingHorizontal = !placingHorizontal;
+                    board.repaint();
+                }
             }
         });
 
@@ -96,39 +152,75 @@ public class ShipPlacementScreen extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createReserveShipComponent(int size) {
-        JPanel comp = new JPanel() {
+    private void rebuildReservePanel() {
+        reservePanel.removeAll();
+        for (Map.Entry<Integer, Integer> entry : remainingBySize.entrySet()) {
+            int size = entry.getKey();
+            int count = entry.getValue();
+            if (count <= 0) continue;
+            reservePanel.add(createReserveShipComponent(size, count));
+            reservePanel.add(Box.createVerticalStrut(6));
+        }
+        reservePanel.revalidate();
+        reservePanel.repaint();
+    }
+
+    private JPanel createReserveShipComponent(int size, int count) {
+        JPanel row = new JPanel(new BorderLayout(8, 0));
+        row.setOpaque(false);
+        row.setMaximumSize(new Dimension(200, Utils.CELL_SIZE + 16));
+
+        JPanel ship = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.setColor(Color.GRAY);
-                g.fillRect(2, 2, size * Utils.CELL_SIZE - 4, Utils.CELL_SIZE - 4);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(currentSize == size ? Theme.ACCENT : Theme.SHIP_COLOR);
+                g2.fillRoundRect(2, 2, size * (Utils.CELL_SIZE - 4) - 4, Utils.CELL_SIZE - 8, 8, 8);
+                g2.dispose();
             }
         };
-        comp.setPreferredSize(new Dimension(size * Utils.CELL_SIZE + 10, Utils.CELL_SIZE + 10));
-        comp.addMouseListener(new MouseAdapter() {
+        ship.setOpaque(false);
+        ship.setPreferredSize(new Dimension(size * (Utils.CELL_SIZE - 4), Utils.CELL_SIZE));
+        ship.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        ship.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 currentSize = size;
-                currentPlacing = new Ship(new ArrayList<>());
+                board.repaint();
+                reservePanel.repaint();
+                updateInstructions();
             }
         });
-        return comp;
+
+        JLabel label = new JLabel(Utils.shipTypeName(size) + " x" + count);
+        label.setFont(Theme.FONT_BODY);
+        label.setForeground(Theme.TEXT_PRIMARY);
+
+        row.add(ship, BorderLayout.WEST);
+        row.add(label, BorderLayout.CENTER);
+        return row;
     }
 
-    private void removeOneFromReserve(int size) {
-        for (Component c : reservePanel.getComponents()) {
-            if (c.getPreferredSize().width >= size * Utils.CELL_SIZE) {
-                reservePanel.remove(c);
-                reservePanel.revalidate();
-                reservePanel.repaint();
-                break;
-            }
-        }
+    private void consumeOneFromReserve(int size) {
+        remainingBySize.merge(size, -1, Integer::sum);
+        rebuildReservePanel();
     }
 
     private boolean isAllPlaced() {
-        return placedShips.size() == Utils.SHIP_SIZES.length;
+        for (int remaining : remainingBySize.values()) {
+            if (remaining > 0) return false;
+        }
+        return true;
+    }
+
+    private void updateInstructions() {
+        int total = Utils.SHIP_SIZES.length;
+        instr.setText(currentSize > 0
+                ? "Розміщується: " + Utils.shipTypeName(currentSize) + " (розмір " + currentSize + "). Розставлено кораблів: "
+                + placedShips.size() + " з " + total
+                : "Оберіть корабель у резерві. Розставлено кораблів: " + placedShips.size() + " з " + total);
     }
 
     private List<Cell> candidateCellsForPlacement(int gx, int gy, int size, boolean horizontal) {
@@ -140,5 +232,47 @@ public class ShipPlacementScreen extends JFrame {
             cand.add(board.getCell(nx, ny));
         }
         return cand;
+    }
+
+    private void randomizeRemaining(Runnable onFinished) {
+        for (Map.Entry<Integer, Integer> entry : new LinkedHashMap<>(remainingBySize).entrySet()) {
+            int size = entry.getKey();
+            int count = entry.getValue();
+            for (int i = 0; i < count; i++) {
+                placeRandomly(size);
+            }
+        }
+        currentSize = -1;
+        board.clearPreview();
+        rebuildReservePanel();
+        updateInstructions();
+        if (isAllPlaced()) {
+            finish(onFinished);
+        }
+    }
+
+    private void placeRandomly(int size) {
+        int attempts = 0;
+        while (attempts < 10000) {
+            attempts++;
+            int x = random.nextInt(Utils.BOARD_SIZE);
+            int y = random.nextInt(Utils.BOARD_SIZE);
+            boolean horizontal = random.nextBoolean();
+            List<Cell> cand = candidateCellsForPlacement(x, y, size, horizontal);
+            if (cand != null && ShipPlacementValidator.canPlaceShip(board, cand)) {
+                Ship s = new Ship(new ArrayList<>(cand));
+                board.addShip(s);
+                player.addShip(s);
+                placedShips.add(s);
+                remainingBySize.merge(size, -1, Integer::sum);
+                return;
+            }
+        }
+    }
+
+    private void finish(Runnable onFinished) {
+        board.setShowShips(false);
+        dispose();
+        onFinished.run();
     }
 }

@@ -8,8 +8,10 @@ import java.util.List;
 public class ShipPlacementValidator {
 
     public static boolean canPlaceShip(GameBoard board, List<Cell> candidateCells) {
+        if (candidateCells == null || candidateCells.isEmpty()) return false;
+
         for (Cell c : candidateCells) {
-            if (!Utils.inBounds(c.getX(), c.getY())) {
+            if (c == null || !Utils.inBounds(c.getX(), c.getY())) {
                 return false;
             }
 

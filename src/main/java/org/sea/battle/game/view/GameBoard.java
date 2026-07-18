@@ -2,8 +2,8 @@ package org.sea.battle.game.view;
 
 import org.sea.battle.game.model.Cell;
 import org.sea.battle.game.model.Ship;
+import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
-
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,15 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameBoard extends JPanel {
-    private  Cell[][] cells;
-    private  List<Ship> ships;
+    private final Cell[][] cells;
+    private final List<Ship> ships;
     private boolean showShips = true;
 
+    private int hoverX = -1, hoverY = -1;
 
     public List<Cell> previewCells = null;
 
     public GameBoard() {
-
         this.cells = new Cell[Utils.BOARD_SIZE][Utils.BOARD_SIZE];
         this.ships = new ArrayList<>();
 
@@ -29,6 +29,7 @@ public class GameBoard extends JPanel {
             }
         }
 
+        setBackground(Theme.BG_PANEL);
         setPreferredSize(new Dimension(Utils.BOARD_SIZE * Utils.CELL_SIZE, Utils.BOARD_SIZE * Utils.CELL_SIZE));
     }
 
@@ -38,16 +39,11 @@ public class GameBoard extends JPanel {
     }
 
     public boolean addShip(Ship ship) {
-        if (ship == null) return false;
+        if (ship == null || ship.cells().isEmpty()) return false;
         for (Cell c : ship.cells()) {
-            if (c == null) return false;
-            if (!Utils.inBounds(c.getX(), c.getY())) return false;
-            if (getCell(c.getX(), c.getY()).hasShip()) return false;
+            if (c == null || !Utils.inBounds(c.getX(), c.getY())) return false;
         }
-        for (Cell c : ship.cells()) {
-            getCell(c.getX(), c.getY()).setShip(true);
-        }
-        ships.add(ship);
+        if (!ships.contains(ship)) ships.add(ship);
         repaint();
         return true;
     }
@@ -62,12 +58,22 @@ public class GameBoard extends JPanel {
         ships.remove(ship);
         repaint();
     }
+
     public List<Ship> getShips() { return ships; }
 
     public void setShowShips(boolean v) { this.showShips = v; repaint(); }
 
     public void setPreviewCells(List<Cell> preview) { this.previewCells = preview; repaint(); }
     public void clearPreview() { this.previewCells = null; repaint(); }
+
+    public void setHoverCell(int x, int y) {
+        if (hoverX == x && hoverY == y) return;
+        hoverX = x;
+        hoverY = y;
+        repaint();
+    }
+
+    public void clearHover() { setHoverCell(-1, -1); }
 
     public Ship findShipAt(int x, int y) {
         for (Ship s : ships) {
@@ -84,19 +90,22 @@ public class GameBoard extends JPanel {
 
         for (int y = 0; y < Utils.BOARD_SIZE; y++) {
             for (int x = 0; x < Utils.BOARD_SIZE; x++) {
+                cells[x][y].setHover(x == hoverX && y == hoverY);
                 cells[x][y].draw(g, showShips);
             }
         }
 
         if (previewCells != null) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.65f));
+            boolean valid = org.sea.battle.game.model.ShipPlacementValidator.canPlaceShip(this, previewCells);
             for (Cell c : previewCells) {
                 if (c == null) continue;
                 int px = c.getX() * Utils.CELL_SIZE;
                 int py = c.getY() * Utils.CELL_SIZE;
-                g2.setColor(new Color(180, 255, 180));
-                g2.fillRect(px + 2, py + 2, Utils.CELL_SIZE - 4, Utils.CELL_SIZE - 4);
+                g2.setColor(valid ? Theme.ACCENT : Theme.HIT_COLOR);
+                g2.fillRoundRect(px + 2, py + 2, Utils.CELL_SIZE - 4, Utils.CELL_SIZE - 4, 8, 8);
             }
             g2.dispose();
         }
