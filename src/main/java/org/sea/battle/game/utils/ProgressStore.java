@@ -29,7 +29,9 @@ public class ProgressStore {
         ownedSkins.add("CLASSIC");
     }
 
-    public int getCoins() { return coins; }
+    public int getCoins() {
+        return coins;
+    }
 
     public void addCoins(int amount) {
         coins += amount;
@@ -43,7 +45,9 @@ public class ProgressStore {
         return true;
     }
 
-    public int getMaxLevelUnlocked() { return maxLevelUnlocked; }
+    public int getMaxLevelUnlocked() {
+        return maxLevelUnlocked;
+    }
 
     public void unlockLevel(int levelIndex) {
         if (levelIndex > maxLevelUnlocked) {
@@ -52,14 +56,18 @@ public class ProgressStore {
         }
     }
 
-    public boolean ownsSkin(String id) { return ownedSkins.contains(id); }
+    public boolean ownsSkin(String id) {
+        return ownedSkins.contains(id);
+    }
 
     public void buySkin(String id) {
         ownedSkins.add(id);
         save();
     }
 
-    public String getSelectedSkin() { return selectedSkin; }
+    public String getSelectedSkin() {
+        return selectedSkin;
+    }
 
     public void selectSkin(String id) {
         selectedSkin = id;

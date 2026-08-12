@@ -58,13 +58,34 @@ public class GameStats {
     }
 
     // Getters
-    public int getTotalGames() { return totalGames; }
-    public int getTotalWins() { return totalWins; }
-    public int getTotalShipsSunk() { return totalShipsSunk; }
-    public int getLongestWinStreak() { return longestWinStreak; }
-    public int getCurrentWinStreak() { return currentWinStreak; }
-    public long getTotalPlayTimeSeconds() { return totalPlayTimeSeconds; }
-    public int getAccuracy() { return accuracy; }
+    public int getTotalGames() {
+        return totalGames;
+    }
+
+    public int getTotalWins() {
+        return totalWins;
+    }
+
+    public int getTotalShipsSunk() {
+        return totalShipsSunk;
+    }
+
+    public int getLongestWinStreak() {
+        return longestWinStreak;
+    }
+
+    public int getCurrentWinStreak() {
+        return currentWinStreak;
+    }
+
+    public long getTotalPlayTimeSeconds() {
+        return totalPlayTimeSeconds;
+    }
+
+    public int getAccuracy() {
+        return accuracy;
+    }
+
     public double getWinRate() {
         return totalGames == 0 ? 0 : (double) totalWins * 100 / totalGames;
     }
@@ -82,7 +103,8 @@ public class GameStats {
             currentWinStreak = Integer.parseInt(p.getProperty("currentWinStreak", "0"));
             totalPlayTimeSeconds = Long.parseLong(p.getProperty("totalPlayTimeSeconds", "0"));
             accuracy = Integer.parseInt(p.getProperty("accuracy", "0"));
-        } catch (IOException | NumberFormatException ignored) {}
+        } catch (IOException | NumberFormatException ignored) {
+        }
     }
 
     private void save() {
@@ -97,6 +119,7 @@ public class GameStats {
         p.setProperty("accuracy", String.valueOf(accuracy));
         try (OutputStream out = new FileOutputStream(STATS_FILE)) {
             p.store(out, "Sea Battle Stats");
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
     }
 }

@@ -6,33 +6,33 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class Theme {
-    public static final Color BG_DARK        = new Color(15, 23, 42);
-    public static final Color BG_PANEL       = new Color(24, 33, 56);
+    public static final Color BG_DARK = new Color(15, 23, 42);
+    public static final Color BG_PANEL = new Color(24, 33, 56);
     public static final Color BG_PANEL_LIGHT = new Color(32, 44, 72);
 
-    public static final Color WATER          = new Color(20, 60, 110);
-    public static final Color WATER_LIGHT    = new Color(33, 90, 150);
-    public static final Color WATER_HOVER    = new Color(52, 130, 195);
+    public static final Color WATER = new Color(20, 60, 110);
+    public static final Color WATER_LIGHT = new Color(33, 90, 150);
+    public static final Color WATER_HOVER = new Color(52, 130, 195);
 
-    public static final Color SHIP_COLOR     = new Color(70, 80, 96);
-    public static final Color SHIP_BORDER    = new Color(210, 215, 225);
+    public static final Color SHIP_COLOR = new Color(70, 80, 96);
+    public static final Color SHIP_BORDER = new Color(210, 215, 225);
 
-    public static final Color HIT_COLOR      = new Color(235, 64, 52);
-    public static final Color MISS_COLOR     = new Color(180, 200, 220);
-    public static final Color SUNK_COLOR     = new Color(120, 20, 20);
+    public static final Color HIT_COLOR = new Color(235, 64, 52);
+    public static final Color MISS_COLOR = new Color(180, 200, 220);
+    public static final Color SUNK_COLOR = new Color(120, 20, 20);
 
-    public static final Color ACCENT         = new Color(45, 212, 191);
-    public static final Color ACCENT_DARK    = new Color(20, 160, 145);
-    public static final Color WARNING        = new Color(245, 158, 11);
+    public static final Color ACCENT = new Color(45, 212, 191);
+    public static final Color ACCENT_DARK = new Color(20, 160, 145);
+    public static final Color WARNING = new Color(245, 158, 11);
 
-    public static final Color TEXT_PRIMARY   = new Color(240, 244, 248);
-    public static final Color TEXT_MUTED     = new Color(148, 163, 184);
+    public static final Color TEXT_PRIMARY = new Color(240, 244, 248);
+    public static final Color TEXT_MUTED = new Color(148, 163, 184);
 
-    public static final Font FONT_TITLE   = new Font("Segoe UI", Font.BOLD, 28);
+    public static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 28);
     public static final Font FONT_HEADING = new Font("Segoe UI", Font.BOLD, 18);
-    public static final Font FONT_BODY    = new Font("Segoe UI", Font.PLAIN, 14);
-    public static final Font FONT_BUTTON  = new Font("Segoe UI", Font.BOLD, 15);
-    public static final Font FONT_MONO    = new Font("Consolas", Font.PLAIN, 13);
+    public static final Font FONT_BODY = new Font("Segoe UI", Font.PLAIN, 14);
+    public static final Font FONT_BUTTON = new Font("Segoe UI", Font.BOLD, 15);
+    public static final Font FONT_MONO = new Font("Consolas", Font.PLAIN, 13);
 
     public static JPanel gradientPanel(Color top, Color bottom) {
         JPanel p = new JPanel() {
@@ -54,6 +54,7 @@ public class Theme {
     public static JButton styledButton(String text, Color base) {
         JButton b = new JButton(text) {
             private boolean hover = false;
+
             {
                 setContentAreaFilled(false);
                 setFocusPainted(false);
@@ -62,8 +63,17 @@ public class Theme {
                 setFont(FONT_BUTTON);
                 setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                 addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override public void mouseEntered(java.awt.event.MouseEvent e) { hover = true; repaint(); }
-                    @Override public void mouseExited(java.awt.event.MouseEvent e) { hover = false; repaint(); }
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        hover = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        hover = false;
+                        repaint();
+                    }
                 });
             }
 

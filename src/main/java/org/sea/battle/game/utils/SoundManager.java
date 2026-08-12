@@ -1,4 +1,5 @@
 package org.sea.battle.game.utils;
+
 import javax.sound.sampled.*;
 
 public class SoundManager {
@@ -10,8 +11,13 @@ public class SoundManager {
         return instance;
     }
 
-    public void setEnabled(boolean v) { enabled = v; }
-    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean v) {
+        enabled = v;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     public void playHit() {
         if (!enabled) return;
@@ -26,27 +32,45 @@ public class SoundManager {
     public void playSunk() {
         if (!enabled) return;
         playTone(600, 80);
-        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ignored) {
+        }
         playTone(700, 80);
-        try { Thread.sleep(50); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException ignored) {
+        }
         playTone(800, 150);
     }
 
     public void playVictory() {
         if (!enabled) return;
         playTone(800, 100);
-        try { Thread.sleep(60); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(60);
+        } catch (InterruptedException ignored) {
+        }
         playTone(1000, 100);
-        try { Thread.sleep(60); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(60);
+        } catch (InterruptedException ignored) {
+        }
         playTone(1200, 200);
     }
 
     public void playDefeat() {
         if (!enabled) return;
         playTone(400, 100);
-        try { Thread.sleep(60); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(60);
+        } catch (InterruptedException ignored) {
+        }
         playTone(300, 100);
-        try { Thread.sleep(60); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(60);
+        } catch (InterruptedException ignored) {
+        }
         playTone(200, 200);
     }
 
@@ -73,7 +97,8 @@ public class SoundManager {
                 line.write(data, 0, data.length);
                 line.drain();
                 line.close();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }).start();
     }
 }

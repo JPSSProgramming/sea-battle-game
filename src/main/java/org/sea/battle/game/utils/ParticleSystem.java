@@ -38,7 +38,9 @@ public class ParticleSystem {
             g.fillOval((int) x, (int) y, 4, 4);
         }
 
-        public boolean isAlive() { return life > 0; }
+        public boolean isAlive() {
+            return life > 0;
+        }
     }
 
     private List<Particle> particles = new ArrayList<>();
@@ -58,5 +60,7 @@ public class ParticleSystem {
         for (Particle p : particles) p.draw(g);
     }
 
-    public boolean hasParticles() { return !particles.isEmpty(); }
+    public boolean hasParticles() {
+        return !particles.isEmpty();
+    }
 }

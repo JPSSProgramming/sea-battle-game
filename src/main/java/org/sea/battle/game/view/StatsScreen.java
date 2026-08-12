@@ -42,7 +42,10 @@ public class StatsScreen extends JFrame {
         add(scroll, BorderLayout.CENTER);
 
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
-        back.addActionListener(e -> { dispose(); new MainMenu(); });
+        back.addActionListener(e -> {
+            dispose();
+            new MainMenu();
+        });
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
         bottom.setBorder(new EmptyBorder(12, 0, 12, 0));

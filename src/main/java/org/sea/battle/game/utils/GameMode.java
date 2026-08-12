@@ -15,6 +15,11 @@ public enum GameMode {
         this.description = description;
     }
 
-    public String getLabel() { return label; }
-    public String getDescription() { return description; }
+    public String getLabel() {
+        return label;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

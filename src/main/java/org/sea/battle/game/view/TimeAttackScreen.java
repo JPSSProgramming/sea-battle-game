@@ -53,7 +53,10 @@ public class TimeAttackScreen extends JFrame {
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(260, 48));
-        back.addActionListener(e -> { dispose(); new MainMenu(); });
+        back.addActionListener(e -> {
+            dispose();
+            new MainMenu();
+        });
         content.add(Box.createVerticalStrut(20));
         content.add(back);
 

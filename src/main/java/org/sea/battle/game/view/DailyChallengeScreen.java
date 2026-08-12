@@ -58,7 +58,10 @@ public class DailyChallengeScreen extends JFrame {
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(280, 52));
-        back.addActionListener(e -> { dispose(); new MainMenu(); });
+        back.addActionListener(e -> {
+            dispose();
+            new MainMenu();
+        });
 
         content.add(date);
         content.add(desc);
