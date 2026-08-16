@@ -9,6 +9,7 @@ import org.sea.battle.game.utils.Fleets;
 import org.sea.battle.game.utils.ProgressStore;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,6 +23,8 @@ public class CampaignScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JPanel top = new JPanel(new BorderLayout());

@@ -6,8 +6,12 @@ import org.sea.battle.game.model.Difficulty;
 import org.sea.battle.game.model.GameLogic;
 import org.sea.battle.game.model.Player;
 import org.sea.battle.game.model.Ship;
+import org.sea.battle.game.utils.GameStats;
+import org.sea.battle.game.utils.ParticleSystem;
+import org.sea.battle.game.utils.SoundManager;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -29,8 +33,10 @@ public class GameWindow extends JFrame {
     private final JLabel rightFleetLabel;
     private final boolean vsAI;
     private final Consumer<Player> onGameOver;
+    private final ParticleSystem particles;
 
     private int shotsRemaining;
+    private long gameStartTime;
 
     public GameWindow(GameLogic logic, boolean vsAI) {
         this(logic, vsAI, null);
@@ -41,8 +47,10 @@ public class GameWindow extends JFrame {
         this.vsAI = vsAI;
         this.onGameOver = onGameOver;
         this.shotsRemaining = logic.shotsPerTurn();
+        this.particles = new ParticleSystem();
+        this.gameStartTime = System.currentTimeMillis();
 
-        this.leftBoard = logic.getPlayer1().getBoard();
+        this.leftBoard  = logic.getPlayer1().getBoard();
         this.rightBoard = logic.getPlayer2().getBoard();
 
         if (vsAI) {
@@ -50,11 +58,11 @@ public class GameWindow extends JFrame {
             if (logic.getPlayer1() instanceof AI) leftBoard.setShowShips(false);
         }
 
-        setTitle("Морський бій" + (logic.isSalvoMode() ? " — режим «Залп»" : ""));
-        setSize(1000, 680);
-        setLocationRelativeTo(null);
+        setTitle("Морський бій" + (logic.isSalvoMode() ? " - режим Залп" : ""));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         this.leftFleet = new FleetTrackerPanel(logic.getPlayer1());
@@ -90,19 +98,15 @@ public class GameWindow extends JFrame {
         add(statusPanel, BorderLayout.SOUTH);
 
         MouseAdapter clickListener = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
+            @Override public void mouseClicked(MouseEvent e) {
                 handleClick((GameBoard) e.getSource(), e);
             }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
+            @Override public void mouseExited(MouseEvent e) {
                 ((GameBoard) e.getSource()).clearHover();
             }
         };
         MouseMotionAdapter hoverListener = new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
+            @Override public void mouseMoved(MouseEvent e) {
                 handleHover((GameBoard) e.getSource(), e);
             }
         };
@@ -110,6 +114,13 @@ public class GameWindow extends JFrame {
         rightBoard.addMouseListener(clickListener);
         leftBoard.addMouseMotionListener(hoverListener);
         rightBoard.addMouseMotionListener(hoverListener);
+
+        Timer particleTimer = new Timer(30, e -> {
+            particles.update();
+            leftBoard.repaint();
+            rightBoard.repaint();
+        });
+        particleTimer.start();
 
         refreshTurnLabels();
         refreshFleetTrackers();
@@ -184,7 +195,17 @@ public class GameWindow extends JFrame {
         refreshBoards();
         refreshFleetTrackers();
         updateStatus(logic.getCurrentPlayer().getName(), outcome);
-        if (outcome.sunkShip() != null) animateSunk(outcome.sunkShip(), opponentBoard);
+
+        if (outcome.sunkShip() != null) {
+            animateSunk(outcome.sunkShip(), opponentBoard);
+            particles.burst(x * Utils.CELL_SIZE + Utils.CELL_SIZE / 2,
+                    y * Utils.CELL_SIZE + Utils.CELL_SIZE / 2, 15, Theme.HIT_COLOR);
+            SoundManager.get().playSunk();
+        } else if (outcome.result() == GameLogic.ShotResult.HIT) {
+            SoundManager.get().playHit();
+        } else {
+            SoundManager.get().playMiss();
+        }
 
         Player winner = logic.checkWinner();
         if (winner != null) {
@@ -228,7 +249,7 @@ public class GameWindow extends JFrame {
         if (logic.isSalvoMode()) {
             shotsLabel.setText("Пострілів залишилось у цьому ході: " + shotsRemaining);
         } else {
-            shotsLabel.setText("Влучив — стріляй ще раз. Промах — хід переходить супернику.");
+            shotsLabel.setText("Влучив - стріляй ще раз. Промах - хід переходить супернику.");
         }
     }
 
@@ -238,10 +259,7 @@ public class GameWindow extends JFrame {
             case HIT -> "Влучення!";
             case SUNK -> "Потоплено: " + outcome.sunkShip().typeName() + " (" + outcome.sunkShip().size() + " палуби)!";
         };
-        status.setText(actorName + " — " + msg);
-        if (outcome.result() != GameLogic.ShotResult.MISS) {
-            Toolkit.getDefaultToolkit().beep();
-        }
+        status.setText(actorName + " - " + msg);
     }
 
     private void playAITurnsIfNeeded() {
@@ -274,7 +292,17 @@ public class GameWindow extends JFrame {
         refreshBoards();
         refreshFleetTrackers();
         updateStatus(logic.getCurrentPlayer().getName(), outcome);
-        if (outcome.sunkShip() != null) animateSunk(outcome.sunkShip(), targetBoard);
+
+        if (outcome.sunkShip() != null) {
+            animateSunk(outcome.sunkShip(), targetBoard);
+            particles.burst(t[0] * Utils.CELL_SIZE + Utils.CELL_SIZE / 2,
+                    t[1] * Utils.CELL_SIZE + Utils.CELL_SIZE / 2, 15, Theme.HIT_COLOR);
+            SoundManager.get().playSunk();
+        } else if (outcome.result() == GameLogic.ShotResult.HIT) {
+            SoundManager.get().playHit();
+        } else {
+            SoundManager.get().playMiss();
+        }
 
         Player winner = logic.checkWinner();
         if (winner != null) {
@@ -303,6 +331,9 @@ public class GameWindow extends JFrame {
     }
 
     private void endWithWinner(Player winner) {
+        long gameTime = (System.currentTimeMillis() - gameStartTime) / 1000;
+        GameStats.get().addPlayTime(gameTime);
+
         this.dispose();
         if (onGameOver != null) {
             onGameOver.accept(winner);

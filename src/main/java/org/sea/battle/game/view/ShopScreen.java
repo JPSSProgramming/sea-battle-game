@@ -3,6 +3,7 @@ package org.sea.battle.game.view;
 import org.sea.battle.game.utils.ProgressStore;
 import org.sea.battle.game.utils.ShipSkin;
 import org.sea.battle.game.utils.Theme;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,8 @@ public class ShopScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JPanel top = new JPanel(new BorderLayout());

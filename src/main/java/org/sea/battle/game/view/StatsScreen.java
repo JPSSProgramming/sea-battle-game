@@ -2,6 +2,7 @@ package org.sea.battle.game.view;
 
 import org.sea.battle.game.utils.GameStats;
 import org.sea.battle.game.utils.Theme;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -15,6 +16,8 @@ public class StatsScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JLabel title = Theme.titleLabel("СТАТИСТИКА");

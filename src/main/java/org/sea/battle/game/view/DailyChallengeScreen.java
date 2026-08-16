@@ -4,13 +4,15 @@ import org.sea.battle.game.model.AI;
 import org.sea.battle.game.model.Difficulty;
 import org.sea.battle.game.model.GameLogic;
 import org.sea.battle.game.model.Player;
+import org.sea.battle.game.utils.GameStats;
+import org.sea.battle.game.utils.SoundManager;
 import org.sea.battle.game.utils.Theme;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.LocalDate;
-
 
 public class DailyChallengeScreen extends JFrame {
 
@@ -20,6 +22,8 @@ public class DailyChallengeScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JPanel content = new JPanel();
@@ -37,9 +41,7 @@ public class DailyChallengeScreen extends JFrame {
         date.setAlignmentX(Component.CENTER_ALIGNMENT);
         date.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        JLabel desc = new JLabel("<html><center>Щодня однакова карта для всіх гравців.<br>" +
-                "Один поєдинок, результат зберігається.<br>" +
-                "Змаганння за часом!</center></html>");
+        JLabel desc = new JLabel("<html><center>Щодня однакова карта для всіх гравців.<br>Один поєдинок, результат зберігається.<br>Змаганння за часом!</center></html>");
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,10 +60,7 @@ public class DailyChallengeScreen extends JFrame {
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(280, 52));
-        back.addActionListener(e -> {
-            dispose();
-            new MainMenu();
-        });
+        back.addActionListener(e -> { dispose(); new MainMenu(); });
 
         content.add(date);
         content.add(desc);
@@ -85,9 +84,13 @@ public class DailyChallengeScreen extends JFrame {
             GameLogic logic = new GameLogic(human, ai, false);
             new GameWindow(logic, true, winner -> {
                 if (winner == human) {
-                    JOptionPane.showMessageDialog(null, "🏆 Ви перемогли в щоденному виклику!",
+                    GameStats.get().recordGame(true, 10, 85);
+                    SoundManager.get().playVictory();
+                    JOptionPane.showMessageDialog(null, "Ви перемогли в щоденному виклику!",
                             "Успіх", JOptionPane.INFORMATION_MESSAGE);
                 } else {
+                    GameStats.get().recordGame(false, 0, 0);
+                    SoundManager.get().playDefeat();
                     JOptionPane.showMessageDialog(null, "Спробуйте завтра в щоденному виклику!",
                             "Результат", JOptionPane.WARNING_MESSAGE);
                 }
@@ -109,9 +112,9 @@ public class DailyChallengeScreen extends JFrame {
         content.setBorder(new EmptyBorder(16, 16, 16, 16));
 
         String[] leaders = {
-                "🥇 Олександр — 2:34",
-                "🥈 Марія — 3:12",
-                "🥉 Іван — 3:45"
+                "1. Олександр - 2:34",
+                "2. Марія - 3:12",
+                "3. Іван - 3:45"
         };
 
         for (String leader : leaders) {

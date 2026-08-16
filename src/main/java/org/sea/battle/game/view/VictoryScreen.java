@@ -5,6 +5,7 @@ import org.sea.battle.game.model.Difficulty;
 import org.sea.battle.game.model.GameLogic;
 import org.sea.battle.game.model.Player;
 import org.sea.battle.game.utils.Theme;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -18,6 +19,8 @@ public class VictoryScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JPanel content = new JPanel();

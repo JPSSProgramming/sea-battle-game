@@ -3,9 +3,12 @@ package org.sea.battle.game.view;
 import org.sea.battle.game.model.AI;
 import org.sea.battle.game.model.GameLogic;
 import org.sea.battle.game.model.Player;
+import org.sea.battle.game.utils.GameStats;
+import org.sea.battle.game.utils.ParticleSystem;
 import org.sea.battle.game.utils.SoundManager;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,28 +17,31 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-
 public class TimedGameWindow extends JFrame {
     private final GameLogic logic;
     private final GameBoard leftBoard;
     private final GameBoard rightBoard;
     private final JLabel timeLabel;
     private final JLabel shipsLabel;
+    private final ParticleSystem particles;
     private int timeRemaining = 300;
     private int shipsSunk = 0;
+    private long gameStartTime;
 
     public TimedGameWindow(GameLogic logic) {
         this.logic = logic;
         this.leftBoard = logic.getPlayer1().getBoard();
         this.rightBoard = logic.getPlayer2().getBoard();
+        this.particles = new ParticleSystem();
+        this.gameStartTime = System.currentTimeMillis();
 
         rightBoard.setShowShips(false);
 
         setTitle("Охота на час");
-        setSize(1000, 680);
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         timeLabel = new JLabel("5:00", SwingConstants.CENTER);
@@ -72,6 +78,8 @@ public class TimedGameWindow extends JFrame {
                 if (outcome.sunkShip() != null) {
                     shipsSunk++;
                     shipsLabel.setText("Знищено: " + shipsSunk);
+                    particles.burst(x * Utils.CELL_SIZE + Utils.CELL_SIZE / 2,
+                            y * Utils.CELL_SIZE + Utils.CELL_SIZE / 2, 20, Theme.HIT_COLOR);
                     SoundManager.get().playSunk();
                 } else if (outcome.result() == GameLogic.ShotResult.HIT) {
                     SoundManager.get().playHit();
@@ -90,6 +98,13 @@ public class TimedGameWindow extends JFrame {
             }
         });
 
+        Timer particleTimer = new Timer(30, e -> {
+            particles.update();
+            leftBoard.repaint();
+            rightBoard.repaint();
+        });
+        particleTimer.start();
+
         Timer gameTimer = new Timer(1000, e -> {
             timeRemaining--;
             int mins = timeRemaining / 60;
@@ -97,6 +112,7 @@ public class TimedGameWindow extends JFrame {
             timeLabel.setText(String.format("%d:%02d", mins, secs));
             if (timeRemaining <= 0) {
                 ((Timer) e.getSource()).stop();
+                particleTimer.stop();
                 endGame();
             }
         });
@@ -120,6 +136,9 @@ public class TimedGameWindow extends JFrame {
     }
 
     private void endGame() {
+        long gameTime = (System.currentTimeMillis() - gameStartTime) / 1000;
+        GameStats.get().addPlayTime(gameTime);
+
         String msg = "Час вийшов!\nЗнищено кораблів: " + shipsSunk;
         JOptionPane.showMessageDialog(this, msg, "Охота на час закінчена", JOptionPane.INFORMATION_MESSAGE);
         dispose();

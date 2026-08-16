@@ -1,15 +1,17 @@
 package org.sea.battle.game.view;
 
+import java.awt.GraphicsEnvironment;
 import org.sea.battle.game.model.AI;
 import org.sea.battle.game.model.Difficulty;
 import org.sea.battle.game.model.GameLogic;
 import org.sea.battle.game.model.Player;
+import org.sea.battle.game.utils.GameStats;
+import org.sea.battle.game.utils.SoundManager;
 import org.sea.battle.game.utils.Theme;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-
 
 public class ArenaScreen extends JFrame {
 
@@ -19,6 +21,8 @@ public class ArenaScreen extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
 
         JPanel content = new JPanel();
@@ -30,8 +34,7 @@ public class ArenaScreen extends JFrame {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 24, 0));
 
-        JLabel desc = new JLabel("<html><center>Перемож 3 послідовних поєдинків.<br>" +
-                "Кожна перемога дає вам 1 жетон.<br>Зберегти серію — отримати винагороду!</center></html>");
+        JLabel desc = new JLabel("<html><center>Перемож 3 послідовних поєдинків.<br>Кожна перемога дає вам 1 жетон.<br>Зберегти серію - отримати винагороду!</center></html>");
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -55,10 +58,7 @@ public class ArenaScreen extends JFrame {
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(240, 48));
-        back.addActionListener(e -> {
-            dispose();
-            new MainMenu();
-        });
+        back.addActionListener(e -> { dispose(); new MainMenu(); });
         content.add(Box.createVerticalStrut(20));
         content.add(back);
 
@@ -73,8 +73,10 @@ public class ArenaScreen extends JFrame {
 
     private void playMatch(Difficulty difficulty, int matchNum, int wins) {
         if (matchNum > 3) {
+            GameStats.get().recordGame(true, 0, 0);
+            SoundManager.get().playVictory();
             JOptionPane.showMessageDialog(null,
-                    "🏆 Арена завершена!\nВи перемогли у " + wins + " поєдинках!",
+                    "Арена завершена!\nВи перемогли у " + wins + " поєдинках!",
                     "Успіх", JOptionPane.INFORMATION_MESSAGE);
             new MainMenu();
             return;
@@ -88,6 +90,8 @@ public class ArenaScreen extends JFrame {
             GameLogic logic = new GameLogic(human, ai, false);
             new GameWindow(logic, true, winner -> {
                 if (winner == human) {
+                    GameStats.get().recordGame(true, 10, 80);
+                    SoundManager.get().playVictory();
                     int newWins = wins + 1;
                     int resp = JOptionPane.showConfirmDialog(null,
                             "Ви перемогли! " + newWins + "/3\n\nПродовжити арену?",
@@ -98,6 +102,8 @@ public class ArenaScreen extends JFrame {
                         new MainMenu();
                     }
                 } else {
+                    GameStats.get().recordGame(false, 0, 0);
+                    SoundManager.get().playDefeat();
                     JOptionPane.showMessageDialog(null,
                             "Ви програли на поєдинку " + matchNum + "\nВаша серія: " + wins + " перемог.",
                             "Арена завершена", JOptionPane.WARNING_MESSAGE);

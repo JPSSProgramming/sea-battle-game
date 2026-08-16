@@ -16,9 +16,9 @@ public class MainMenu extends JFrame {
 
     public MainMenu() {
         setTitle("Морський бій");
-        setSize(500, 720);
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         setLayout(new BorderLayout());
         Theme.styleFrame(this);
 
@@ -41,7 +41,6 @@ public class MainMenu extends JFrame {
         coins.setAlignmentX(Component.CENTER_ALIGNMENT);
         coins.setBorder(new EmptyBorder(6, 0, 20, 0));
 
-
         JLabel modes = new JLabel("= РЕЖИМИ ГРАВЦІВ =");
         modes.setFont(Theme.FONT_BODY);
         modes.setForeground(Theme.TEXT_MUTED);
@@ -49,20 +48,11 @@ public class MainMenu extends JFrame {
         modes.setBorder(new EmptyBorder(0, 0, 12, 0));
 
         JButton campaign = makeButton("Кампанія", Theme.ACCENT_DARK,
-                e -> {
-                    dispose();
-                    new CampaignScreen();
-                });
+                e -> { dispose(); new CampaignScreen(); });
         JButton shop = makeButton("Магазин кораблів", Theme.WARNING.darker(),
-                e -> {
-                    dispose();
-                    new ShopScreen();
-                });
+                e -> { dispose(); new ShopScreen(); });
         JButton stats = makeButton("Статистика", Theme.BG_PANEL_LIGHT,
-                e -> {
-                    dispose();
-                    new StatsScreen();
-                });
+                e -> { dispose(); new StatsScreen(); });
 
         JLabel special = new JLabel("= СПЕЦІАЛЬНІ РЕЖИМИ =");
         special.setFont(Theme.FONT_BODY);
@@ -71,20 +61,11 @@ public class MainMenu extends JFrame {
         special.setBorder(new EmptyBorder(16, 0, 12, 0));
 
         JButton timeAttack = makeButton("Охота на час (5 хв)", new Color(220, 100, 100),
-                e -> {
-                    dispose();
-                    new TimeAttackScreen();
-                });
+                e -> { dispose(); new TimeAttackScreen(); });
         JButton arena = makeButton("Арена (3 поєдинки)", new Color(100, 150, 220),
-                e -> {
-                    dispose();
-                    new ArenaScreen();
-                });
+                e -> { dispose(); new ArenaScreen(); });
         JButton daily = makeButton("Щоденний виклик", new Color(200, 150, 50),
-                e -> {
-                    dispose();
-                    new DailyChallengeScreen();
-                });
+                e -> { dispose(); new DailyChallengeScreen(); });
 
         JLabel classic = new JLabel("= КЛАСИЧНІ РЕЖИМИ =");
         classic.setFont(Theme.FONT_BODY);
@@ -138,7 +119,6 @@ public class MainMenu extends JFrame {
         add(scroll, BorderLayout.CENTER);
         setVisible(true);
     }
-
 
     private JButton makeButton(String text, Color color, ActionListener action) {
         JButton btn = Theme.styledButton(text, color);

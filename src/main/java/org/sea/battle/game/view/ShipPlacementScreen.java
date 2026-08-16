@@ -5,6 +5,7 @@ import org.sea.battle.game.controller.ShipRotationHandler;
 import org.sea.battle.game.model.*;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -47,6 +48,8 @@ public class ShipPlacementScreen extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        setUndecorated(true);
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
         Theme.styleFrame(this);
         getContentPane().setBackground(Theme.BG_DARK);
 
