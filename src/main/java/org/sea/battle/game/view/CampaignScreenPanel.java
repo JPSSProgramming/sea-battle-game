@@ -9,36 +9,42 @@ import org.sea.battle.game.utils.Fleets;
 import org.sea.battle.game.utils.ProgressStore;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
-import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class CampaignScreen extends JFrame {
+public class CampaignScreenPanel extends JPanel {
+    private JLabel coinsLabel;
+    private JPanel list;
 
-    public CampaignScreen() {
-        setTitle("Кампанія — рівні");
-        setSize(580, 660);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public CampaignScreenPanel() {
         setLayout(new BorderLayout());
-        setUndecorated(true);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
-        Theme.styleFrame(this);
+        setBackground(Theme.BG_DARK);
+        rebuild();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        rebuild();
+    }
+
+    private void rebuild() {
+        removeAll();
 
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(Theme.BG_DARK);
         top.setBorder(new EmptyBorder(16, 16, 8, 16));
         top.add(Theme.titleLabel("Кампанія"), BorderLayout.NORTH);
 
-        JLabel coins = new JLabel("Монети: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
-        coins.setFont(Theme.FONT_HEADING);
-        coins.setForeground(Theme.WARNING);
-        top.add(coins, BorderLayout.SOUTH);
+        coinsLabel = new JLabel("Монети: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
+        coinsLabel.setFont(Theme.FONT_HEADING);
+        coinsLabel.setForeground(Theme.WARNING);
+        top.add(coinsLabel, BorderLayout.SOUTH);
         add(top, BorderLayout.NORTH);
 
-        JPanel list = new JPanel();
+        list = new JPanel();
         list.setLayout(new BoxLayout(list, BoxLayout.Y_AXIS));
         list.setBackground(Theme.BG_DARK);
         list.setBorder(new EmptyBorder(8, 16, 8, 16));
@@ -55,17 +61,15 @@ public class CampaignScreen extends JFrame {
         add(scroll, BorderLayout.CENTER);
 
         JButton back = Theme.styledButton("Назад у меню", Theme.BG_PANEL_LIGHT);
-        back.addActionListener(e -> {
-            dispose();
-            new MainMenu();
-        });
+        back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
         bottom.setBorder(new EmptyBorder(8, 16, 16, 16));
         bottom.add(back);
         add(bottom, BorderLayout.SOUTH);
 
-        setVisible(true);
+        revalidate();
+        repaint();
     }
 
     private JPanel buildRow(Level level, boolean unlocked) {
@@ -78,7 +82,7 @@ public class CampaignScreen extends JFrame {
         textPanel.setOpaque(false);
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
-        JLabel name = new JLabel((unlocked ? "" : "\uD83D\uDD12 ") + level.index() + ". " + level.name());
+        JLabel name = new JLabel((unlocked ? "" : "[ЗАБЛОКОВАНО] ") + level.index() + ". " + level.name());
         name.setFont(Theme.FONT_HEADING);
         name.setForeground(unlocked ? Theme.TEXT_PRIMARY : Theme.TEXT_MUTED);
 
@@ -89,7 +93,7 @@ public class CampaignScreen extends JFrame {
         StringBuilder tags = new StringBuilder("Нагорода: " + level.coinReward() + " монет");
         if (level.salvo()) tags.append(" · Залп");
         if (level.bossShip()) tags.append(" · Флагман");
-        if (level.playerHandicap() > 0) tags.append(" · У вас менше кораблів");
+        if (level.playerHandicap() > 0) tags.append(" · Гандикап");
 
         JLabel reward = new JLabel(tags.toString());
         reward.setFont(Theme.FONT_MONO);
@@ -119,10 +123,9 @@ public class CampaignScreen extends JFrame {
         AI ai = new AI("Ворог (" + level.difficulty() + ")", level.difficulty());
         ai.autoPlaceShips(aiFleet);
 
-        dispose();
-        new ShipPlacementScreen(human, playerFleet, () -> {
+        ShipPlacementPanel placement = new ShipPlacementPanel(human, playerFleet, () -> {
             GameLogic logic = new GameLogic(human, ai, level.salvo());
-            new GameWindow(logic, true, winner -> {
+            GamePanel gamePanel = new GamePanel(logic, true, winner -> {
                 boolean playerWon = (winner == human);
                 if (playerWon) {
                     ProgressStore.get().addCoins(level.coinReward());
@@ -131,11 +134,13 @@ public class CampaignScreen extends JFrame {
                 String msg = playerWon
                         ? "Перемога! Отримано " + level.coinReward() + " монет."
                         : "Поразка. Спробуйте ще раз.";
-                JOptionPane.showMessageDialog(null, msg,
+                JOptionPane.showMessageDialog(NavigationManager.get().getWindow(), msg,
                         playerWon ? "Рівень пройдено" : "Рівень не пройдено",
                         playerWon ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
-                new CampaignScreen();
+                NavigationManager.get().showCampaign();
             });
+            NavigationManager.get().showDynamic(gamePanel);
         });
+        NavigationManager.get().showDynamic(placement);
     }
 }
