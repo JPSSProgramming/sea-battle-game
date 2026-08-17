@@ -1,9 +1,9 @@
 package org.sea.battle.game.model;
 
 public enum Difficulty {
-    EASY("Легко"),
-    MEDIUM("Середньо"),
-    HARD("Складно");
+    EASY("Easy"),
+    MEDIUM("Average"),
+    HARD("Difficult");
 
     private final String label;
 
