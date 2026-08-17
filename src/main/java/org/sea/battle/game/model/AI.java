@@ -51,7 +51,6 @@ public class AI extends Player {
             }
         }
         if (candidates.isEmpty()) {
-
             for (int x = 0; x < Utils.BOARD_SIZE; x++) {
                 for (int y = 0; y < Utils.BOARD_SIZE; y++) {
                     if (!tried.contains(key(x, y))) candidates.add(new int[]{x, y});
