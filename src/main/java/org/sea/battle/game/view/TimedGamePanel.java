@@ -40,7 +40,7 @@ public class TimedGamePanel extends JPanel implements Stoppable {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(Theme.BG_PANEL);
         topBar.setBorder(new EmptyBorder(8, 12, 8, 12));
-        JButton menuBtn = Theme.styledButton("У меню (Esc)", Theme.BG_PANEL_LIGHT);
+        JButton menuBtn = Theme.styledButton("to menu (Esc)", Theme.BG_PANEL_LIGHT);
         menuBtn.addActionListener(e -> NavigationManager.get().showMainMenu());
         topBar.add(menuBtn, BorderLayout.WEST);
 
@@ -48,7 +48,7 @@ public class TimedGamePanel extends JPanel implements Stoppable {
         timeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         timeLabel.setForeground(Theme.WARNING);
 
-        shipsLabel = new JLabel("Знищено: 0", SwingConstants.CENTER);
+        shipsLabel = new JLabel("Destroy: 0", SwingConstants.CENTER);
         shipsLabel.setFont(Theme.FONT_HEADING);
         shipsLabel.setForeground(Theme.ACCENT);
 
@@ -62,8 +62,8 @@ public class TimedGamePanel extends JPanel implements Stoppable {
         JPanel boards = new JPanel(new GridLayout(1, 2, 24, 0));
         boards.setBorder(new EmptyBorder(20, 20, 10, 20));
         boards.setBackground(Theme.BG_DARK);
-        boards.add(wrapBoard(leftBoard, "Ви"));
-        boards.add(wrapBoard(rightBoard, "Ворог"));
+        boards.add(wrapBoard(leftBoard, "You"));
+        boards.add(wrapBoard(rightBoard, "Enemy"));
         add(boards, BorderLayout.CENTER);
 
         MouseAdapter clickListener = new MouseAdapter() {
@@ -79,7 +79,7 @@ public class TimedGamePanel extends JPanel implements Stoppable {
                 rightBoard.repaint();
                 if (outcome.sunkShip() != null) {
                     shipsSunk++;
-                    shipsLabel.setText("Знищено: " + shipsSunk);
+                    shipsLabel.setText("Destroy: " + shipsSunk);
                     rightBoard.getParticles().burst(
                             x * Utils.CELL_SIZE + Utils.CELL_SIZE / 2,
                             y * Utils.CELL_SIZE + Utils.CELL_SIZE / 2,
@@ -150,8 +150,9 @@ public class TimedGamePanel extends JPanel implements Stoppable {
         GameStats.get().recordGame(shipsSunk > 0, shipsSunk, 70);
         SoundManager.get().playVictory();
 
-        String msg = "Час вийшов!\nЗнищено кораблів: " + shipsSunk;
-        JOptionPane.showMessageDialog(this, msg, "Охота на час закінчена", JOptionPane.INFORMATION_MESSAGE);
+        String msg = "Time is up!\n" +
+                "Ships destroyed: " + shipsSunk;
+        JOptionPane.showMessageDialog(this, msg, "The hunt for time is over.", JOptionPane.INFORMATION_MESSAGE);
         NavigationManager.get().showMainMenu();
     }
 }
