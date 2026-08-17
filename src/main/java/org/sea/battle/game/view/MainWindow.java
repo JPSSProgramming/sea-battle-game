@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 public class MainWindow extends JFrame {
 
     public MainWindow() {
-        setTitle("Морський бій");
+        setTitle("Sea battle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
