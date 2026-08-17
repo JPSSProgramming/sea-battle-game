@@ -29,7 +29,7 @@ public class MainMenuPanel extends JPanel {
 
     private void refreshCoins() {
         if (coinsLabel != null) {
-            coinsLabel.setText("Монети: " + ProgressStore.get().getCoins());
+            coinsLabel.setText("Coins: " + ProgressStore.get().getCoins());
         }
     }
 
@@ -41,46 +41,46 @@ public class MainMenuPanel extends JPanel {
         content.setBackground(Theme.BG_DARK);
         content.setBorder(new EmptyBorder(28, 36, 28, 36));
 
-        JLabel title = Theme.titleLabel("МОРСЬКИЙ БІЙ");
+        JLabel title = Theme.titleLabel("SEA BATTLE");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitle = new JLabel("Класична стратегічна гра", SwingConstants.CENTER);
+        JLabel subtitle = new JLabel("Classic strategy game", SwingConstants.CENTER);
         subtitle.setFont(Theme.FONT_BODY);
         subtitle.setForeground(Theme.TEXT_MUTED);
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        coinsLabel = new JLabel("Монети: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
+        coinsLabel = new JLabel("Coins: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
         coinsLabel.setFont(Theme.FONT_HEADING);
         coinsLabel.setForeground(Theme.WARNING);
         coinsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         coinsLabel.setBorder(new EmptyBorder(6, 0, 20, 0));
 
-        JLabel modes = sectionLabel("= РЕЖИМИ ГРАВЦІВ =");
+        JLabel modes = sectionLabel("= PLAYER MODES =");
 
-        JButton campaign = makeButton("Кампанія", Theme.ACCENT_DARK,
+        JButton campaign = makeButton("Campaign", Theme.ACCENT_DARK,
                 e -> NavigationManager.get().showCampaign());
-        JButton shop = makeButton("Магазин кораблів", Theme.WARNING.darker(),
+        JButton shop = makeButton("Ship shop", Theme.WARNING.darker(),
                 e -> NavigationManager.get().showShop());
-        JButton stats = makeButton("Статистика", Theme.BG_PANEL_LIGHT,
+        JButton stats = makeButton("Statistics", Theme.BG_PANEL_LIGHT,
                 e -> NavigationManager.get().showStats());
 
-        JLabel special = sectionLabel("= СПЕЦІАЛЬНІ РЕЖИМИ =");
+        JLabel special = sectionLabel("= SPECIAL MODES =");
 
-        JButton timeAttack = makeButton("Охота на час (5 хв)", new Color(220, 100, 100),
+        JButton timeAttack = makeButton("Time Hunt (5 min)", new Color(220, 100, 100),
                 e -> NavigationManager.get().showTimeAttack());
-        JButton arena = makeButton("Арена (3 поєдинки)", new Color(100, 150, 220),
+        JButton arena = makeButton("Arena (3 matches)", new Color(100, 150, 220),
                 e -> NavigationManager.get().showArena());
-        JButton daily = makeButton("Щоденний виклик", new Color(200, 150, 50),
+        JButton daily = makeButton("Daily Challenge", new Color(200, 150, 50),
                 e -> NavigationManager.get().showDailyChallenge());
 
-        JLabel classic = sectionLabel("= КЛАСИЧНІ РЕЖИМИ =");
+        JLabel classic = sectionLabel("= CLASSIC MODES =");
 
-        JButton playAI = makeButton("Гра проти комп'ютера", Theme.ACCENT_DARK,
+        JButton playAI = makeButton("Playing against the computer", Theme.ACCENT_DARK,
                 e -> showAiSetupDialog());
-        JButton playFriend = makeButton("Гра з другом", Theme.BG_PANEL_LIGHT,
+        JButton playFriend = makeButton("Playing with a friend", Theme.BG_PANEL_LIGHT,
                 e -> showPvpSetupDialog());
 
-        JCheckBox sound = new JCheckBox("Звуки вмикнені");
+        JCheckBox sound = new JCheckBox("Sounds are on");
         sound.setFont(Theme.FONT_BODY);
         sound.setForeground(Theme.TEXT_PRIMARY);
         sound.setOpaque(false);
@@ -88,7 +88,7 @@ public class MainMenuPanel extends JPanel {
         sound.addActionListener(e -> SoundManager.get().setEnabled(sound.isSelected()));
         sound.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton exit = makeButton("Вихід", new Color(90, 30, 30),
+        JButton exit = makeButton("Exit", new Color(90, 30, 30),
                 e -> System.exit(0));
 
         content.add(title);
@@ -144,7 +144,7 @@ public class MainMenuPanel extends JPanel {
     private void showAiSetupDialog() {
         JDialog dialog = new JDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this),
-                "Налаштування гри проти ШІ",
+                "Setting up a game against AI",
                 true);
         dialog.setLayout(new BorderLayout());
         Theme.styleFrame(dialog);
@@ -156,23 +156,23 @@ public class MainMenuPanel extends JPanel {
         panel.setBackground(Theme.BG_DARK);
         panel.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        JLabel heading = new JLabel("Рівень складності ШІ");
+        JLabel heading = new JLabel("AI difficulty level");
         heading.setFont(Theme.FONT_HEADING);
         heading.setForeground(Theme.TEXT_PRIMARY);
         heading.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         ButtonGroup group = new ButtonGroup();
-        JRadioButton easy = radio("Легко — стріляє майже навмання", group, false);
-        JRadioButton medium = radio("Середньо — добиває підбитий корабель", group, true);
-        JRadioButton hard = radio("Складно — визначає напрямок корабля", group, false);
+        JRadioButton easy = radio("Easy - shoots almost at random", group, false);
+        JRadioButton medium = radio("Medium - Finishes off a downed ship", group, true);
+        JRadioButton hard = radio("Difficult - determines the direction of the ship", group, false);
 
-        JCheckBox salvo = new JCheckBox("Режим «Залп» (пострілів = кількості кораблів)");
+        JCheckBox salvo = new JCheckBox("\"Volley\" mode (shots = number of ships)");
         salvo.setFont(Theme.FONT_BODY);
         salvo.setForeground(Theme.TEXT_PRIMARY);
         salvo.setOpaque(false);
         salvo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton start = Theme.styledButton("Почати гру", Theme.ACCENT_DARK);
+        JButton start = Theme.styledButton("Start the game", Theme.ACCENT_DARK);
         start.setAlignmentX(Component.CENTER_ALIGNMENT);
         start.setMaximumSize(new Dimension(220, 46));
         start.addActionListener(e -> {
@@ -200,7 +200,7 @@ public class MainMenuPanel extends JPanel {
     private void showPvpSetupDialog() {
         JDialog dialog = new JDialog(
                 (Frame) SwingUtilities.getWindowAncestor(this),
-                "Налаштування гри з другом",
+                "Setting up a game with a friend",
                 true);
         dialog.setLayout(new BorderLayout());
         Theme.styleFrame(dialog);
@@ -212,13 +212,13 @@ public class MainMenuPanel extends JPanel {
         panel.setBackground(Theme.BG_DARK);
         panel.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        JCheckBox salvo = new JCheckBox("Режим «Залп» (пострілів = кількості кораблів)");
+        JCheckBox salvo = new JCheckBox("\"Volley\" mode (shots = number of ships)");
         salvo.setFont(Theme.FONT_BODY);
         salvo.setForeground(Theme.TEXT_PRIMARY);
         salvo.setOpaque(false);
         salvo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton start = Theme.styledButton("Почати гру", Theme.ACCENT_DARK);
+        JButton start = Theme.styledButton("Start the game", Theme.ACCENT_DARK);
         start.setAlignmentX(Component.CENTER_ALIGNMENT);
         start.setMaximumSize(new Dimension(220, 46));
         start.addActionListener(e -> {
@@ -236,8 +236,8 @@ public class MainMenuPanel extends JPanel {
     }
 
     private void startQuickGameVsAI(Difficulty difficulty, boolean salvo) {
-        Player human = new Player("Гравець");
-        AI ai = new AI("Комп'ютер (" + difficulty + ")", difficulty);
+        Player human = new Player("Player");
+        AI ai = new AI("Computer (" + difficulty + ")", difficulty);
         ai.autoPlaceShips();
 
         ShipPlacementPanel placement = new ShipPlacementPanel(human, () -> {
@@ -248,8 +248,8 @@ public class MainMenuPanel extends JPanel {
     }
 
     private void startQuickGameVsPlayer(boolean salvo) {
-        Player p1 = new Player("Гравець 1");
-        Player p2 = new Player("Гравець 2");
+        Player p1 = new Player("Player 1");
+        Player p2 = new Player("Player 2");
 
         ShipPlacementPanel placement1 = new ShipPlacementPanel(p1, () -> {
             ShipPlacementPanel placement2 = new ShipPlacementPanel(p2, () -> {
