@@ -1,11 +1,11 @@
 package org.sea.battle.game.utils;
 
 public enum GameMode {
-    CLASSIC("Класичний", "Традиційна гра"),
-    TIMED("Охота на час", "5 хвилин на знищення максимуму кораблів"),
-    ARENA("Арена", "3 послідовні поєдинки з бонусами"),
-    DAILY("Щоденний виклик", "Змагання всіх гравців за часом"),
-    FORTUNE("Фортуни", "Випадкові бонуси змінюють гру");
+    CLASSIC("Classic", "Traditional game"),
+    TIMED("Hunting for time", "5 minutes to destroy maximum ships"),
+    ARENA("Arena", "3 consecutive matches with bonuses"),
+    DAILY("Daily Challenge", "All players compete against time"),
+    FORTUNE("Fortunes", "Random bonuses change the game");
 
     private final String label;
     private final String description;
