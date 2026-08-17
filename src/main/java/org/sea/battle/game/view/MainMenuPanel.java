@@ -11,8 +11,13 @@ import org.sea.battle.game.utils.Theme;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.util.function.BiConsumer;
 
 public class MainMenuPanel extends JPanel {
+    private static final Dimension DEFAULT_BTN_SIZE = new Dimension(340, 46);
+    private static final Dimension DIALOG_BTN_SIZE = new Dimension(220, 46);
+
     private JLabel coinsLabel;
 
     public MainMenuPanel() {
@@ -55,65 +60,33 @@ public class MainMenuPanel extends JPanel {
         coinsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         coinsLabel.setBorder(new EmptyBorder(6, 0, 20, 0));
 
-        JLabel modes = sectionLabel("= PLAYER MODES =");
-
-        JButton campaign = makeButton("Campaign", Theme.ACCENT_DARK,
-                e -> NavigationManager.get().showCampaign());
-        JButton shop = makeButton("Ship shop", Theme.WARNING.darker(),
-                e -> NavigationManager.get().showShop());
-        JButton stats = makeButton("Statistics", Theme.BG_PANEL_LIGHT,
-                e -> NavigationManager.get().showStats());
-
-        JLabel special = sectionLabel("= SPECIAL MODES =");
-
-        JButton timeAttack = makeButton("Time Hunt (5 min)", new Color(220, 100, 100),
-                e -> NavigationManager.get().showTimeAttack());
-        JButton arena = makeButton("Arena (3 matches)", new Color(100, 150, 220),
-                e -> NavigationManager.get().showArena());
-        JButton daily = makeButton("Daily Challenge", new Color(200, 150, 50),
-                e -> NavigationManager.get().showDailyChallenge());
-
-        JLabel classic = sectionLabel("= CLASSIC MODES =");
-
-        JButton playAI = makeButton("Playing against the computer", Theme.ACCENT_DARK,
-                e -> showAiSetupDialog());
-        JButton playFriend = makeButton("Playing with a friend", Theme.BG_PANEL_LIGHT,
-                e -> showPvpSetupDialog());
-
-        JCheckBox sound = new JCheckBox("Sounds are on");
-        sound.setFont(Theme.FONT_BODY);
-        sound.setForeground(Theme.TEXT_PRIMARY);
-        sound.setOpaque(false);
-        sound.setSelected(SoundManager.get().isEnabled());
+        JCheckBox sound = checkbox("Sounds are on", SoundManager.get().isEnabled());
         sound.addActionListener(e -> SoundManager.get().setEnabled(sound.isSelected()));
-        sound.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton exit = makeButton("Exit", new Color(90, 30, 30),
-                e -> System.exit(0));
 
         content.add(title);
         content.add(subtitle);
         content.add(coinsLabel);
-        content.add(modes);
-        content.add(campaign);
-        content.add(Box.createVerticalStrut(8));
-        content.add(shop);
-        content.add(Box.createVerticalStrut(8));
-        content.add(stats);
-        content.add(special);
-        content.add(timeAttack);
-        content.add(Box.createVerticalStrut(8));
-        content.add(arena);
-        content.add(Box.createVerticalStrut(8));
-        content.add(daily);
-        content.add(classic);
-        content.add(playAI);
-        content.add(Box.createVerticalStrut(8));
-        content.add(playFriend);
+
+        // Player Modes
+        content.add(sectionLabel("= PLAYER MODES ="));
+        addWithStrut(content, makeButton("Campaign", Theme.ACCENT_DARK, e -> NavigationManager.get().showCampaign()), 8);
+        addWithStrut(content, makeButton("Ship shop", Theme.WARNING.darker(), e -> NavigationManager.get().showShop()), 8);
+        content.add(makeButton("Statistics", Theme.BG_PANEL_LIGHT, e -> NavigationManager.get().showStats()));
+
+        // Special Modes
+        content.add(sectionLabel("= SPECIAL MODES ="));
+        addWithStrut(content, makeButton("Time Hunt (5 min)", new Color(220, 100, 100), e -> NavigationManager.get().showTimeAttack()), 8);
+        addWithStrut(content, makeButton("Arena (3 matches)", new Color(100, 150, 220), e -> NavigationManager.get().showArena()), 8);
+        content.add(makeButton("Daily Challenge", new Color(200, 150, 50), e -> NavigationManager.get().showDailyChallenge()));
+
+        // Classic Modes
+        content.add(sectionLabel("= CLASSIC MODES ="));
+        addWithStrut(content, makeButton("Playing against the computer", Theme.ACCENT_DARK, e -> showAiSetupDialog()), 8);
+        content.add(makeButton("Playing with a friend", Theme.BG_PANEL_LIGHT, e -> showPvpSetupDialog()));
+
         content.add(Box.createVerticalStrut(12));
-        content.add(sound);
-        content.add(Box.createVerticalStrut(8));
-        content.add(exit);
+        addWithStrut(content, sound, 8);
+        content.add(makeButton("Exit", new Color(90, 30, 30), e -> System.exit(0)));
 
         JScrollPane scroll = new JScrollPane(content);
         scroll.setBorder(null);
@@ -133,22 +106,47 @@ public class MainMenuPanel extends JPanel {
         return l;
     }
 
-    private JButton makeButton(String text, Color color, java.awt.event.ActionListener action) {
+    private JButton makeButton(String text, Color color, ActionListener action) {
+        return makeButton(text, color, DEFAULT_BTN_SIZE, action);
+    }
+
+    private JButton makeButton(String text, Color color, Dimension maxDimension, ActionListener action) {
         JButton btn = Theme.styledButton(text, color);
         btn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btn.setMaximumSize(new Dimension(340, 46));
+        btn.setMaximumSize(maxDimension);
         btn.addActionListener(action);
         return btn;
     }
 
-    private void showAiSetupDialog() {
-        JDialog dialog = new JDialog(
-                (Frame) SwingUtilities.getWindowAncestor(this),
-                "Setting up a game against AI",
-                true);
+    private JCheckBox checkbox(String text, boolean selected) {
+        JCheckBox cb = new JCheckBox(text, selected);
+        cb.setFont(Theme.FONT_BODY);
+        cb.setForeground(Theme.TEXT_PRIMARY);
+        cb.setOpaque(false);
+        cb.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return cb;
+    }
+
+    private JRadioButton radio(String text, ButtonGroup group, boolean selected) {
+        JRadioButton r = new JRadioButton(text, selected);
+        r.setFont(Theme.FONT_BODY);
+        r.setForeground(Theme.TEXT_PRIMARY);
+        r.setOpaque(false);
+        r.setAlignmentX(Component.CENTER_ALIGNMENT);
+        group.add(r);
+        return r;
+    }
+
+    private void addWithStrut(JPanel panel, Component comp, int strutSize) {
+        panel.add(comp);
+        panel.add(Box.createVerticalStrut(strutSize));
+    }
+
+    private void showSetupDialog(String title, int width, int height, BiConsumer<JDialog, JPanel> dialogBuilder) {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), title, true);
         dialog.setLayout(new BorderLayout());
         Theme.styleFrame(dialog);
-        dialog.setSize(380, 320);
+        dialog.setSize(width, height);
         dialog.setLocationRelativeTo(this);
 
         JPanel panel = new JPanel();
@@ -156,83 +154,60 @@ public class MainMenuPanel extends JPanel {
         panel.setBackground(Theme.BG_DARK);
         panel.setBorder(new EmptyBorder(24, 28, 24, 28));
 
-        JLabel heading = new JLabel("AI difficulty level");
-        heading.setFont(Theme.FONT_HEADING);
-        heading.setForeground(Theme.TEXT_PRIMARY);
-        heading.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        ButtonGroup group = new ButtonGroup();
-        JRadioButton easy = radio("Easy - shoots almost at random", group, false);
-        JRadioButton medium = radio("Medium - Finishes off a downed ship", group, true);
-        JRadioButton hard = radio("Difficult - determines the direction of the ship", group, false);
-
-        JCheckBox salvo = new JCheckBox("\"Volley\" mode (shots = number of ships)");
-        salvo.setFont(Theme.FONT_BODY);
-        salvo.setForeground(Theme.TEXT_PRIMARY);
-        salvo.setOpaque(false);
-        salvo.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton start = Theme.styledButton("Start the game", Theme.ACCENT_DARK);
-        start.setAlignmentX(Component.CENTER_ALIGNMENT);
-        start.setMaximumSize(new Dimension(220, 46));
-        start.addActionListener(e -> {
-            Difficulty difficulty = easy.isSelected() ? Difficulty.EASY
-                    : hard.isSelected() ? Difficulty.HARD
-                    : Difficulty.MEDIUM;
-            dialog.dispose();
-            startQuickGameVsAI(difficulty, salvo.isSelected());
-        });
-
-        panel.add(heading);
-        panel.add(Box.createVerticalStrut(12));
-        panel.add(easy);
-        panel.add(medium);
-        panel.add(hard);
-        panel.add(Box.createVerticalStrut(16));
-        panel.add(salvo);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(start);
+        dialogBuilder.accept(dialog, panel);
 
         dialog.add(panel, BorderLayout.CENTER);
         dialog.setVisible(true);
     }
 
-    private void showPvpSetupDialog() {
-        JDialog dialog = new JDialog(
-                (Frame) SwingUtilities.getWindowAncestor(this),
-                "Setting up a game with a friend",
-                true);
-        dialog.setLayout(new BorderLayout());
-        Theme.styleFrame(dialog);
-        dialog.setSize(380, 220);
-        dialog.setLocationRelativeTo(this);
+    private void showAiSetupDialog() {
+        showSetupDialog("Setting up a game against AI", 380, 320, (dialog, panel) -> {
+            JLabel heading = new JLabel("AI difficulty level");
+            heading.setFont(Theme.FONT_HEADING);
+            heading.setForeground(Theme.TEXT_PRIMARY);
+            heading.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Theme.BG_DARK);
-        panel.setBorder(new EmptyBorder(24, 28, 24, 28));
+            ButtonGroup group = new ButtonGroup();
+            JRadioButton easy = radio("Easy - shoots almost at random", group, false);
+            JRadioButton medium = radio("Medium - Finishes off a downed ship", group, true);
+            JRadioButton hard = radio("Difficult - determines the direction of the ship", group, false);
 
-        JCheckBox salvo = new JCheckBox("\"Volley\" mode (shots = number of ships)");
-        salvo.setFont(Theme.FONT_BODY);
-        salvo.setForeground(Theme.TEXT_PRIMARY);
-        salvo.setOpaque(false);
-        salvo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            JCheckBox salvo = checkbox("\"Volley\" mode (shots = number of ships)", false);
 
-        JButton start = Theme.styledButton("Start the game", Theme.ACCENT_DARK);
-        start.setAlignmentX(Component.CENTER_ALIGNMENT);
-        start.setMaximumSize(new Dimension(220, 46));
-        start.addActionListener(e -> {
-            dialog.dispose();
-            startQuickGameVsPlayer(salvo.isSelected());
+            JButton start = makeButton("Start the game", Theme.ACCENT_DARK, DIALOG_BTN_SIZE, e -> {
+                Difficulty difficulty = easy.isSelected() ? Difficulty.EASY
+                        : hard.isSelected() ? Difficulty.HARD
+                        : Difficulty.MEDIUM;
+                dialog.dispose();
+                startQuickGameVsAI(difficulty, salvo.isSelected());
+            });
+
+            panel.add(heading);
+            panel.add(Box.createVerticalStrut(12));
+            panel.add(easy);
+            panel.add(medium);
+            panel.add(hard);
+            panel.add(Box.createVerticalStrut(16));
+            panel.add(salvo);
+            panel.add(Box.createVerticalStrut(20));
+            panel.add(start);
         });
+    }
 
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(salvo);
-        panel.add(Box.createVerticalStrut(20));
-        panel.add(start);
+    private void showPvpSetupDialog() {
+        showSetupDialog("Setting up a game with a friend", 380, 220, (dialog, panel) -> {
+            JCheckBox salvo = checkbox("\"Volley\" mode (shots = number of ships)", false);
 
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.setVisible(true);
+            JButton start = makeButton("Start the game", Theme.ACCENT_DARK, DIALOG_BTN_SIZE, e -> {
+                dialog.dispose();
+                startQuickGameVsPlayer(salvo.isSelected());
+            });
+
+            panel.add(Box.createVerticalStrut(8));
+            panel.add(salvo);
+            panel.add(Box.createVerticalStrut(20));
+            panel.add(start);
+        });
     }
 
     private void startQuickGameVsAI(Difficulty difficulty, boolean salvo) {
@@ -259,15 +234,5 @@ public class MainMenuPanel extends JPanel {
             NavigationManager.get().showDynamic(placement2);
         });
         NavigationManager.get().showDynamic(placement1);
-    }
-
-    private JRadioButton radio(String text, ButtonGroup group, boolean selected) {
-        JRadioButton r = new JRadioButton(text, selected);
-        r.setFont(Theme.FONT_BODY);
-        r.setForeground(Theme.TEXT_PRIMARY);
-        r.setOpaque(false);
-        r.setAlignmentX(Component.CENTER_ALIGNMENT);
-        group.add(r);
-        return r;
     }
 }
