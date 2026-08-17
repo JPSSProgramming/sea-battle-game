@@ -3,7 +3,6 @@ package org.sea.battle.game.utils;
 import java.io.*;
 import java.util.*;
 
-
 public class GameStats {
     private static GameStats instance;
 
@@ -36,10 +35,10 @@ public class GameStats {
         accuracy = 0;
     }
 
-    public void recordGame(boolean won, int shipsSunk, int accuracy) {
+    public void recordGame(boolean won, int shipsSunk, int accuracyValue) {
         totalGames++;
         totalShipsSunk += shipsSunk;
-        this.accuracy = (this.accuracy + accuracy) / 2;
+        this.accuracy = (this.accuracy + accuracyValue) / 2;
         if (won) {
             totalWins++;
             currentWinStreak++;
@@ -57,7 +56,6 @@ public class GameStats {
         save();
     }
 
-    // Getters
     public int getTotalGames() {
         return totalGames;
     }

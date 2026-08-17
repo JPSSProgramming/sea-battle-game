@@ -20,63 +20,49 @@ public class SoundManager {
     }
 
     public void playHit() {
-        if (!enabled) return;
-        playTone(800, 100);
+        if (enabled) playTone(800, 100);
     }
 
     public void playMiss() {
-        if (!enabled) return;
-        playTone(300, 150);
+        if (enabled) playTone(300, 150);
     }
 
     public void playSunk() {
         if (!enabled) return;
         playTone(600, 80);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(50);
         playTone(700, 80);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(50);
         playTone(800, 150);
     }
 
     public void playVictory() {
         if (!enabled) return;
         playTone(800, 100);
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(60);
         playTone(1000, 100);
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(60);
         playTone(1200, 200);
     }
 
     public void playDefeat() {
         if (!enabled) return;
         playTone(400, 100);
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(60);
         playTone(300, 100);
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException ignored) {
-        }
+        sleep(60);
         playTone(200, 200);
     }
 
     public void playButtonClick() {
-        if (!enabled) return;
-        playTone(500, 50);
+        if (enabled) playTone(500, 50);
+    }
+
+    private void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ignored) {
+        }
     }
 
     private void playTone(int frequency, int durationMs) {

@@ -34,7 +34,6 @@ public class Player {
 
     public boolean hasLost() {
         if (ships.isEmpty()) return false;
-
         for (Ship s : ships) {
             if (!s.isSunk()) return false;
         }

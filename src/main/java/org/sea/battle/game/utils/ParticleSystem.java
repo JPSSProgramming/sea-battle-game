@@ -1,53 +1,52 @@
 package org.sea.battle.game.utils;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-
 public class ParticleSystem {
-    public static class Particle {
-        public double x, y;
-        public double vx, vy;
-        public Color color;
-        public int life; // 0-255
-        public int maxLife;
 
-        public Particle(double x, double y, Color color) {
+    private static class Particle {
+        double x, y, vx, vy;
+        Color color;
+        int life = 255;
+        final int maxLife = 255;
+
+        Particle(double x, double y, Color color, Random r) {
             this.x = x;
             this.y = y;
             this.color = color;
-            this.life = 255;
-            this.maxLife = 255;
-            Random r = new Random();
             this.vx = (r.nextDouble() - 0.5) * 4;
-            this.vy = (r.nextDouble() - 0.5) * 4;
+            this.vy = (r.nextDouble() - 0.5) * 4 - 1;
         }
 
-        public void update() {
+        void update() {
             x += vx;
             y += vy;
-            vy += 0.1;
-            life -= 5;
+            vy += 0.12;
+            life -= 6;
         }
 
-        public void draw(Graphics2D g) {
-            int alpha = (int) (255 * life / (double) maxLife);
+        void draw(Graphics2D g) {
+            int alpha = Math.max(0, Math.min(255, 255 * life / maxLife));
             g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
-            g.fillOval((int) x, (int) y, 4, 4);
+            g.fillOval((int) x, (int) y, 5, 5);
         }
 
-        public boolean isAlive() {
+        boolean isAlive() {
             return life > 0;
         }
     }
 
-    private List<Particle> particles = new ArrayList<>();
+    private final List<Particle> particles = new ArrayList<>();
+    private final Random random = new Random();
 
     public void burst(int x, int y, int count, Color color) {
         for (int i = 0; i < count; i++) {
-            particles.add(new Particle(x + Math.random() * 20 - 10, y + Math.random() * 20 - 10, color));
+            particles.add(new Particle(
+                    x + random.nextDouble() * 24 - 12,
+                    y + random.nextDouble() * 24 - 12,
+                    color, random));
         }
     }
 

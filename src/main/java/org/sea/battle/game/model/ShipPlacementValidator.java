@@ -14,11 +14,9 @@ public class ShipPlacementValidator {
             if (c == null || !Utils.inBounds(c.getX(), c.getY())) {
                 return false;
             }
-
             if (c.hasShip()) {
                 return false;
             }
-
             if (hasNeighborShip(board, c)) {
                 return false;
             }

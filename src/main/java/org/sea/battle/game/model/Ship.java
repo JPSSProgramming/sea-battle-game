@@ -14,7 +14,6 @@ public record Ship(List<Cell> cells) {
     public void setCells(List<Cell> newCells) {
         for (Cell c : this.cells) c.setShip(false);
         this.cells.clear();
-
         this.cells.addAll(newCells);
         for (Cell c : this.cells) c.setShip(true);
     }

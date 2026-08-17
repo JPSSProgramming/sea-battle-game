@@ -34,23 +34,6 @@ public class Theme {
     public static final Font FONT_BUTTON = new Font("Segoe UI", Font.BOLD, 15);
     public static final Font FONT_MONO = new Font("Consolas", Font.PLAIN, 13);
 
-    public static JPanel gradientPanel(Color top, Color bottom) {
-        JPanel p = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                GradientPaint gp = new GradientPaint(0, 0, top, 0, getHeight(), bottom);
-                g2.setPaint(gp);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        p.setOpaque(false);
-        return p;
-    }
-
     public static JButton styledButton(String text, Color base) {
         JButton b = new JButton(text) {
             private boolean hover = false;
