@@ -2,23 +2,27 @@ package org.sea.battle.game.view;
 
 import org.sea.battle.game.utils.GameStats;
 import org.sea.battle.game.utils.Theme;
-import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class StatsScreen extends JFrame {
+public class StatsScreenPanel extends JPanel {
 
-    public StatsScreen() {
-        setTitle("Статистика");
-        setSize(520, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public StatsScreenPanel() {
         setLayout(new BorderLayout());
-        setUndecorated(true);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
-        Theme.styleFrame(this);
+        setBackground(Theme.BG_DARK);
+        rebuild();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        rebuild();
+    }
+
+    private void rebuild() {
+        removeAll();
 
         JLabel title = Theme.titleLabel("СТАТИСТИКА");
         title.setBorder(new EmptyBorder(20, 0, 20, 0));
@@ -31,13 +35,13 @@ public class StatsScreen extends JFrame {
 
         GameStats stats = GameStats.get();
 
-        add(statRow(content, "Усього ігор", String.valueOf(stats.getTotalGames())));
-        add(statRow(content, "Перемог", String.valueOf(stats.getTotalWins())));
-        add(statRow(content, "Процент перемог", String.format("%.1f%%", stats.getWinRate())));
-        add(statRow(content, "Кораблів знищено", String.valueOf(stats.getTotalShipsSunk())));
-        add(statRow(content, "Найдовша серія перемог", String.valueOf(stats.getLongestWinStreak())));
-        add(statRow(content, "Точність", stats.getAccuracy() + "%"));
-        add(statRow(content, "Загальний час гри", formatTime(stats.getTotalPlayTimeSeconds())));
+        content.add(statRow("Усього ігор", String.valueOf(stats.getTotalGames())));
+        content.add(statRow("Перемог", String.valueOf(stats.getTotalWins())));
+        content.add(statRow("Процент перемог", String.format("%.1f%%", stats.getWinRate())));
+        content.add(statRow("Кораблів знищено", String.valueOf(stats.getTotalShipsSunk())));
+        content.add(statRow("Найдовша серія перемог", String.valueOf(stats.getLongestWinStreak())));
+        content.add(statRow("Точність", stats.getAccuracy() + "%"));
+        content.add(statRow("Загальний час гри", formatTime(stats.getTotalPlayTimeSeconds())));
 
         JScrollPane scroll = new JScrollPane(content);
         scroll.setBorder(null);
@@ -45,20 +49,18 @@ public class StatsScreen extends JFrame {
         add(scroll, BorderLayout.CENTER);
 
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
-        back.addActionListener(e -> {
-            dispose();
-            new MainMenu();
-        });
+        back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
         bottom.setBorder(new EmptyBorder(12, 0, 12, 0));
         bottom.add(back);
         add(bottom, BorderLayout.SOUTH);
 
-        setVisible(true);
+        revalidate();
+        repaint();
     }
 
-    private JPanel statRow(JPanel parent, String label, String value) {
+    private JPanel statRow(String label, String value) {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setOpaque(false);
         row.setMaximumSize(new Dimension(2000, 50));
@@ -75,8 +77,6 @@ public class StatsScreen extends JFrame {
 
         row.add(lbl, BorderLayout.WEST);
         row.add(val, BorderLayout.EAST);
-        parent.add(row);
-        parent.add(Box.createVerticalStrut(4));
         return row;
     }
 
