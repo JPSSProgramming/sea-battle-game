@@ -36,9 +36,9 @@ public class CampaignScreenPanel extends JPanel {
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(Theme.BG_DARK);
         top.setBorder(new EmptyBorder(16, 16, 8, 16));
-        top.add(Theme.titleLabel("Кампанія"), BorderLayout.NORTH);
+        top.add(Theme.titleLabel("Campaign"), BorderLayout.NORTH);
 
-        coinsLabel = new JLabel("Монети: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
+        coinsLabel = new JLabel("Coins: " + ProgressStore.get().getCoins(), SwingConstants.CENTER);
         coinsLabel.setFont(Theme.FONT_HEADING);
         coinsLabel.setForeground(Theme.WARNING);
         top.add(coinsLabel, BorderLayout.SOUTH);
@@ -60,7 +60,7 @@ public class CampaignScreenPanel extends JPanel {
         scroll.getViewport().setBackground(Theme.BG_DARK);
         add(scroll, BorderLayout.CENTER);
 
-        JButton back = Theme.styledButton("Назад у меню", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back to menu", Theme.BG_PANEL_LIGHT);
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
@@ -82,7 +82,7 @@ public class CampaignScreenPanel extends JPanel {
         textPanel.setOpaque(false);
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
-        JLabel name = new JLabel((unlocked ? "" : "[ЗАБЛОКОВАНО] ") + level.index() + ". " + level.name());
+        JLabel name = new JLabel((unlocked ? "" : "[BLOCKED] ") + level.index() + ". " + level.name());
         name.setFont(Theme.FONT_HEADING);
         name.setForeground(unlocked ? Theme.TEXT_PRIMARY : Theme.TEXT_MUTED);
 
@@ -90,10 +90,10 @@ public class CampaignScreenPanel extends JPanel {
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
 
-        StringBuilder tags = new StringBuilder("Нагорода: " + level.coinReward() + " монет");
-        if (level.salvo()) tags.append(" · Залп");
-        if (level.bossShip()) tags.append(" · Флагман");
-        if (level.playerHandicap() > 0) tags.append(" · Гандикап");
+        StringBuilder tags = new StringBuilder("Award: " + level.coinReward() + "coins ");
+        if (level.salvo()) tags.append("Volley");
+        if (level.bossShip()) tags.append("Flagship");
+        if (level.playerHandicap() > 0) tags.append("Handicap");
 
         JLabel reward = new JLabel(tags.toString());
         reward.setFont(Theme.FONT_MONO);
@@ -103,7 +103,7 @@ public class CampaignScreenPanel extends JPanel {
         textPanel.add(desc);
         textPanel.add(reward);
 
-        JButton play = Theme.styledButton(unlocked ? "Грати" : "Заблоковано",
+        JButton play = Theme.styledButton(unlocked ? "Play" : "Blocked",
                 unlocked ? Theme.ACCENT_DARK : new Color(60, 60, 60));
         play.setEnabled(unlocked);
         play.addActionListener(e -> playLevel(level));
@@ -114,13 +114,13 @@ public class CampaignScreenPanel extends JPanel {
     }
 
     private void playLevel(Level level) {
-        Player human = new Player("Гравець");
+        Player human = new Player("Player");
         int[] playerFleet = level.playerHandicap() > 0
                 ? Fleets.withHandicap(level.playerHandicap())
                 : Utils.SHIP_SIZES;
         int[] aiFleet = level.bossShip() ? Fleets.withBoss() : Utils.SHIP_SIZES;
 
-        AI ai = new AI("Ворог (" + level.difficulty() + ")", level.difficulty());
+        AI ai = new AI("Enemy (" + level.difficulty() + ")", level.difficulty());
         ai.autoPlaceShips(aiFleet);
 
         ShipPlacementPanel placement = new ShipPlacementPanel(human, playerFleet, () -> {
@@ -132,10 +132,10 @@ public class CampaignScreenPanel extends JPanel {
                     ProgressStore.get().unlockLevel(level.index() + 1);
                 }
                 String msg = playerWon
-                        ? "Перемога! Отримано " + level.coinReward() + " монет."
-                        : "Поразка. Спробуйте ще раз.";
+                        ? "Victory! Received " + level.coinReward() + "coins"
+                        : "Defeat. Try again.";
                 JOptionPane.showMessageDialog(NavigationManager.get().getWindow(), msg,
-                        playerWon ? "Рівень пройдено" : "Рівень не пройдено",
+                        playerWon ? "Level passed" : "Level not passed",
                         playerWon ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.WARNING_MESSAGE);
                 NavigationManager.get().showCampaign();
             });
