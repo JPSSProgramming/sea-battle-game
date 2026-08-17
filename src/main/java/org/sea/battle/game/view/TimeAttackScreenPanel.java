@@ -21,17 +21,17 @@ public class TimeAttackScreenPanel extends JPanel {
         content.setBackground(Theme.BG_DARK);
         content.setBorder(new EmptyBorder(48, 48, 36, 48));
 
-        JLabel title = Theme.titleLabel("ОХОТА НА ЧАС");
+        JLabel title = Theme.titleLabel("HUNTING FOR TIME");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 24, 0));
 
-        JLabel desc = new JLabel("<html><center>5 хвилин часу.<br>Знищ максимум кораблів супротивника.<br>Результат зберігається у статистиці.</center></html>", SwingConstants.CENTER);
+        JLabel desc = new JLabel("<html><center>5 minutes of time<br>Destroy the maximum number of enemy ships<br>The result is stored in statistics.</center></html>", SwingConstants.CENTER);
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
         desc.setBorder(new EmptyBorder(0, 0, 32, 0));
 
-        JLabel diff = new JLabel("Виберіть складність:");
+        JLabel diff = new JLabel("Choose difficulty:");
         diff.setFont(Theme.FONT_HEADING);
         diff.setForeground(Theme.TEXT_PRIMARY);
         diff.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -50,7 +50,7 @@ public class TimeAttackScreenPanel extends JPanel {
             content.add(Box.createVerticalStrut(10));
         }
 
-        JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(260, 48));
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
@@ -64,8 +64,8 @@ public class TimeAttackScreenPanel extends JPanel {
     }
 
     private void startGame(Difficulty difficulty) {
-        Player human = new Player("Гравець");
-        AI ai = new AI("Супротивник (" + difficulty + ")", difficulty);
+        Player human = new Player("Player");
+        AI ai = new AI("Enemy (" + difficulty + ")", difficulty);
         ai.autoPlaceShips();
 
         ShipPlacementPanel placement = new ShipPlacementPanel(human, () -> {
