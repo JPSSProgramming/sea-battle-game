@@ -23,17 +23,17 @@ public class ArenaScreenPanel extends JPanel {
         content.setBackground(Theme.BG_DARK);
         content.setBorder(new EmptyBorder(48, 48, 36, 48));
 
-        JLabel title = Theme.titleLabel("АРЕНА");
+        JLabel title = Theme.titleLabel("ARENA");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 24, 0));
 
-        JLabel desc = new JLabel("<html><center>Перемож 3 послідовних поєдинки.<br>Кожна перемога дає вам 1 жетон.<br>Зберегти серію — отримати винагороду!</center></html>", SwingConstants.CENTER);
+        JLabel desc = new JLabel("<html><center>Win 3 consecutive matches<br>Each victory gives you 1 token<br>Save the series and get rewarded!</center></html>", SwingConstants.CENTER);
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
         desc.setBorder(new EmptyBorder(0, 0, 32, 0));
 
-        JLabel diff = new JLabel("Виберіть опонента:");
+        JLabel diff = new JLabel("Choose an opponent:");
         diff.setFont(Theme.FONT_HEADING);
         diff.setForeground(Theme.TEXT_PRIMARY);
         diff.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -52,7 +52,7 @@ public class ArenaScreenPanel extends JPanel {
             content.add(Box.createVerticalStrut(8));
         }
 
-        JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(240, 48));
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
@@ -74,14 +74,14 @@ public class ArenaScreenPanel extends JPanel {
             GameStats.get().recordGame(true, 0, 0);
             SoundManager.get().playVictory();
             JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
-                    "Арена завершена!\nВи перемогли у " + wins + " поєдинках!",
-                    "Успіх", JOptionPane.INFORMATION_MESSAGE);
+                    "The arena is complete!\nYou won in" + wins + " duels!",
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
             NavigationManager.get().showMainMenu();
             return;
         }
 
-        Player human = new Player("Гравець");
-        AI ai = new AI("Опонент " + matchNum + " (" + difficulty + ")", difficulty);
+        Player human = new Player("Player");
+        AI ai = new AI("Opponent " + matchNum + " (" + difficulty + ")", difficulty);
         ai.autoPlaceShips();
 
         ShipPlacementPanel placement = new ShipPlacementPanel(human, () -> {
@@ -92,8 +92,8 @@ public class ArenaScreenPanel extends JPanel {
                     SoundManager.get().playVictory();
                     int newWins = wins + 1;
                     int resp = JOptionPane.showConfirmDialog(NavigationManager.get().getWindow(),
-                            "Ви перемогли! " + newWins + "/3\n\nПродовжити арену?",
-                            "Поєдинок " + matchNum, JOptionPane.YES_NO_OPTION);
+                            "You won! " + newWins + "/3\n\nContinue the arena?",
+                            "Duel " + matchNum, JOptionPane.YES_NO_OPTION);
                     if (resp == JOptionPane.YES_OPTION) {
                         playMatch(difficulty, matchNum + 1, newWins);
                     } else {
@@ -103,8 +103,8 @@ public class ArenaScreenPanel extends JPanel {
                     GameStats.get().recordGame(false, 0, 0);
                     SoundManager.get().playDefeat();
                     JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
-                            "Ви програли на поєдинку " + matchNum + "\nВаша серія: " + wins + " перемог.",
-                            "Арена завершена", JOptionPane.WARNING_MESSAGE);
+                            "You lost the duel " + matchNum + "\nYour series:" + wins + "victories ",
+                            "Arena completed", JOptionPane.WARNING_MESSAGE);
                     NavigationManager.get().showMainMenu();
                 }
             });
