@@ -30,7 +30,7 @@ public class ShopScreenPanel extends JPanel {
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(Theme.BG_DARK);
         top.setBorder(new EmptyBorder(16, 16, 8, 16));
-        top.add(Theme.titleLabel("Магазин"), BorderLayout.NORTH);
+        top.add(Theme.titleLabel("Store"), BorderLayout.NORTH);
 
         coinsLabel = new JLabel("", SwingConstants.CENTER);
         coinsLabel.setFont(Theme.FONT_HEADING);
@@ -48,7 +48,7 @@ public class ShopScreenPanel extends JPanel {
         scroll.getViewport().setBackground(Theme.BG_DARK);
         add(scroll, BorderLayout.CENTER);
 
-        JButton back = Theme.styledButton("Назад у меню", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back to menu", Theme.BG_PANEL_LIGHT);
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
@@ -61,7 +61,7 @@ public class ShopScreenPanel extends JPanel {
 
     private void refresh() {
         if (coinsLabel == null) return;
-        coinsLabel.setText("Монети: " + ProgressStore.get().getCoins());
+        coinsLabel.setText("Coins: " + ProgressStore.get().getCoins());
         listPanel.removeAll();
         for (ShipSkin skin : ShipSkin.values()) {
             listPanel.add(buildRow(skin));
@@ -94,7 +94,7 @@ public class ShopScreenPanel extends JPanel {
         preview.setOpaque(false);
         preview.setPreferredSize(new Dimension(96, 34));
 
-        JLabel label = new JLabel(skin.label + (skin.price > 0 ? " — " + skin.price + " монет" : " (базовий)"));
+        JLabel label = new JLabel(skin.label + (skin.price > 0 ? " — " + skin.price + " coins" : " (base)"));
         label.setFont(Theme.FONT_BODY);
         label.setForeground(Theme.TEXT_PRIMARY);
 
@@ -103,25 +103,25 @@ public class ShopScreenPanel extends JPanel {
 
         JButton action;
         if (selected) {
-            action = Theme.styledButton("Обрано", new Color(60, 60, 60));
+            action = Theme.styledButton("Selected", new Color(60, 60, 60));
             action.setEnabled(false);
         } else if (owned) {
-            JButton btn = Theme.styledButton("Активувати", Theme.ACCENT_DARK);
+            JButton btn = Theme.styledButton("Active", Theme.ACCENT_DARK);
             btn.addActionListener(e -> {
                 ProgressStore.get().selectSkin(skin.id);
                 refresh();
             });
             action = btn;
         } else {
-            JButton btn = Theme.styledButton("Купити", Theme.WARNING.darker());
+            JButton btn = Theme.styledButton("Buy", Theme.WARNING.darker());
             btn.addActionListener(e -> {
                 if (ProgressStore.get().spendCoins(skin.price)) {
                     ProgressStore.get().buySkin(skin.id);
                     ProgressStore.get().selectSkin(skin.id);
                     refresh();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Недостатньо монет.",
-                            "Купівля неможлива", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Not enough coins",
+                            "Purchase is not possible.", JOptionPane.WARNING_MESSAGE);
                 }
             });
             action = btn;
