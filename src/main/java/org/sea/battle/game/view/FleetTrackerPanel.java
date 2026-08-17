@@ -59,6 +59,6 @@ public class FleetTrackerPanel extends JPanel {
     public String summaryText() {
         long total = player.getShips().size();
         long sunk = player.getShips().stream().filter(Ship::isSunk).count();
-        return "Потоплено кораблів: " + sunk + " з " + total;
+        return "Ships sunk:" + sunk + " with " + total;
     }
 }
