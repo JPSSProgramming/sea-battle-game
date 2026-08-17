@@ -67,10 +67,10 @@ public class GamePanel extends JPanel implements Stoppable {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(Theme.BG_PANEL);
         topBar.setBorder(new EmptyBorder(8, 12, 8, 12));
-        JButton menuBtn = Theme.styledButton("У меню (Esc)", Theme.BG_PANEL_LIGHT);
+        JButton menuBtn = Theme.styledButton("In the menu (Esc)", Theme.BG_PANEL_LIGHT);
         menuBtn.addActionListener(e -> NavigationManager.get().showMainMenu());
         topBar.add(menuBtn, BorderLayout.WEST);
-        JLabel titleLbl = new JLabel(logic.isSalvoMode() ? "Морський бій — режим Залп" : "Морський бій", SwingConstants.CENTER);
+        JLabel titleLbl = new JLabel(logic.isSalvoMode() ? "Naval Battle - Volley Mode" : "Naval battle", SwingConstants.CENTER);
         titleLbl.setFont(Theme.FONT_HEADING);
         titleLbl.setForeground(Theme.TEXT_PRIMARY);
         topBar.add(titleLbl, BorderLayout.CENTER);
@@ -261,19 +261,19 @@ public class GamePanel extends JPanel implements Stoppable {
     }
 
     private void refreshTurnLabels() {
-        status.setText("Хід: " + logic.getCurrentPlayer().getName());
+        status.setText("Course: " + logic.getCurrentPlayer().getName());
         if (logic.isSalvoMode()) {
-            shotsLabel.setText("Пострілів залишилось у цьому ході: " + shotsRemaining);
+            shotsLabel.setText("Shots left in this turn: " + shotsRemaining);
         } else {
-            shotsLabel.setText("Влучив — стріляй ще раз. Промах — хід переходить супернику.");
+            shotsLabel.setText("Hit - shoot again. Miss - the turn passes to the opponent.");
         }
     }
 
     private void updateStatus(String actorName, GameLogic.ShotOutcome outcome) {
         String msg = switch (outcome.result()) {
-            case MISS -> "Промах.";
-            case HIT -> "Влучення!";
-            case SUNK -> "Потоплено: " + outcome.sunkShip().typeName() + " (" + outcome.sunkShip().size() + " палуби)!";
+            case MISS -> "Miss";
+            case HIT -> "Hit!";
+            case SUNK -> "Sunk: " + outcome.sunkShip().typeName() + " (" + outcome.sunkShip().size() + " decks)!";
         };
         status.setText(actorName + " — " + msg);
     }
@@ -356,8 +356,8 @@ public class GamePanel extends JPanel implements Stoppable {
             onGameOver.accept(winner);
         } else {
             GameStats.get().recordGame(humanWon, winner.getShips().size(), 75);
-            String msg = winner.getName() + " переміг!";
-            JOptionPane.showMessageDialog(this, msg, "Гру завершено",
+            String msg = winner.getName() + " won!";
+            JOptionPane.showMessageDialog(this, msg, "Game over",
                     JOptionPane.INFORMATION_MESSAGE);
             NavigationManager.get().showMainMenu();
         }
