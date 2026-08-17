@@ -50,7 +50,7 @@ public class ShipPlacementPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Theme.BG_DARK);
 
-        JLabel title = new JLabel("Розстановка — " + player.getName(), SwingConstants.CENTER);
+        JLabel title = new JLabel("Arrangement —" + player.getName(), SwingConstants.CENTER);
         title.setFont(Theme.FONT_HEADING);
         title.setForeground(Theme.TEXT_PRIMARY);
         title.setBorder(new EmptyBorder(14, 0, 6, 0));
@@ -60,7 +60,7 @@ public class ShipPlacementPanel extends JPanel {
         reservePanel.setLayout(new BoxLayout(reservePanel, BoxLayout.Y_AXIS));
         reservePanel.setBackground(Theme.BG_PANEL);
         reservePanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEmptyBorder(8, 8, 8, 8), "Резерв кораблів"));
+                BorderFactory.createEmptyBorder(8, 8, 8, 8), "Reserve ships"));
         rebuildReservePanel();
 
         JPanel boardWrap = new JPanel(new GridBagLayout());
@@ -86,13 +86,13 @@ public class ShipPlacementPanel extends JPanel {
         updateInstructions();
 
         JLabel help = new JLabel(
-                "R — повернути перед постановкою · ПКМ по кораблю — повернути · Перетягніть корабель мишею, щоб переставити · Esc — у меню",
+                "R — rotate before staging · RMB on the ship — rotate · Drag the ship with the mouse to rearrange · Esc — in the menu",
                 SwingConstants.CENTER);
         help.setFont(Theme.FONT_MONO);
         help.setForeground(Theme.TEXT_MUTED);
         help.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton randomize = Theme.styledButton("Розставити випадково", Theme.BG_PANEL_LIGHT);
+        JButton randomize = Theme.styledButton("Arrange randomly", Theme.BG_PANEL_LIGHT);
         randomize.setAlignmentX(Component.CENTER_ALIGNMENT);
         randomize.addActionListener(e -> randomizeRemaining(onFinished));
 
@@ -224,9 +224,9 @@ public class ShipPlacementPanel extends JPanel {
     private void updateInstructions() {
         int total = fleetSize;
         instr.setText(currentSize > 0
-                ? "Розміщується: " + Utils.shipTypeName(currentSize) + " (розмір " + currentSize + "). Розставлено: "
-                + placedShips.size() + " з " + total
-                : "Оберіть корабель у резерві. Розставлено: " + placedShips.size() + " з " + total);
+                ? "Located:" + Utils.shipTypeName(currentSize) + "size (" + currentSize + ") Arranged:"
+                + placedShips.size() + " with " + total
+                : "Choose a ship in reserve. Placed:" + placedShips.size() + " with " + total);
     }
 
     private List<Cell> candidateCellsForPlacement(int gx, int gy, int size, boolean horizontal) {
