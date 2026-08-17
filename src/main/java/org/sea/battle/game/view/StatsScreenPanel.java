@@ -24,7 +24,7 @@ public class StatsScreenPanel extends JPanel {
     private void rebuild() {
         removeAll();
 
-        JLabel title = Theme.titleLabel("СТАТИСТИКА");
+        JLabel title = Theme.titleLabel("STATISTICS");
         title.setBorder(new EmptyBorder(20, 0, 20, 0));
         add(title, BorderLayout.NORTH);
 
@@ -35,20 +35,20 @@ public class StatsScreenPanel extends JPanel {
 
         GameStats stats = GameStats.get();
 
-        content.add(statRow("Усього ігор", String.valueOf(stats.getTotalGames())));
-        content.add(statRow("Перемог", String.valueOf(stats.getTotalWins())));
-        content.add(statRow("Процент перемог", String.format("%.1f%%", stats.getWinRate())));
-        content.add(statRow("Кораблів знищено", String.valueOf(stats.getTotalShipsSunk())));
-        content.add(statRow("Найдовша серія перемог", String.valueOf(stats.getLongestWinStreak())));
-        content.add(statRow("Точність", stats.getAccuracy() + "%"));
-        content.add(statRow("Загальний час гри", formatTime(stats.getTotalPlayTimeSeconds())));
+        content.add(statRow("Total games", String.valueOf(stats.getTotalGames())));
+        content.add(statRow("Victories", String.valueOf(stats.getTotalWins())));
+        content.add(statRow("Winning percentage", String.format("%.1f%%", stats.getWinRate())));
+        content.add(statRow("Ships destroyed", String.valueOf(stats.getTotalShipsSunk())));
+        content.add(statRow("Longest winning streak", String.valueOf(stats.getLongestWinStreak())));
+        content.add(statRow("Precision", stats.getAccuracy() + "%"));
+        content.add(statRow("Total game time", formatTime(stats.getTotalPlayTimeSeconds())));
 
         JScrollPane scroll = new JScrollPane(content);
         scroll.setBorder(null);
         scroll.getViewport().setBackground(Theme.BG_DARK);
         add(scroll, BorderLayout.CENTER);
 
-        JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back", Theme.BG_PANEL_LIGHT);
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
@@ -83,6 +83,6 @@ public class StatsScreenPanel extends JPanel {
     private String formatTime(long seconds) {
         long hours = seconds / 3600;
         long minutes = (seconds % 3600) / 60;
-        return String.format("%d год. %d хв.", hours, minutes);
+        return String.format("%d hours %d min.", hours, minutes);
     }
 }
