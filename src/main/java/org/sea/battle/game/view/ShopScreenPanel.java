@@ -3,25 +3,29 @@ package org.sea.battle.game.view;
 import org.sea.battle.game.utils.ProgressStore;
 import org.sea.battle.game.utils.ShipSkin;
 import org.sea.battle.game.utils.Theme;
-import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-public class ShopScreen extends JFrame {
-    private final JLabel coinsLabel;
-    private final JPanel listPanel;
+public class ShopScreenPanel extends JPanel {
+    private JLabel coinsLabel;
+    private JPanel listPanel;
 
-    public ShopScreen() {
-        setTitle("Магазин кораблів");
-        setSize(500, 560);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public ShopScreenPanel() {
         setLayout(new BorderLayout());
-        setUndecorated(true);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
-        Theme.styleFrame(this);
+        setBackground(Theme.BG_DARK);
+        rebuild();
+    }
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        refresh();
+    }
+
+    private void rebuild() {
+        removeAll();
 
         JPanel top = new JPanel(new BorderLayout());
         top.setBackground(Theme.BG_DARK);
@@ -45,10 +49,7 @@ public class ShopScreen extends JFrame {
         add(scroll, BorderLayout.CENTER);
 
         JButton back = Theme.styledButton("Назад у меню", Theme.BG_PANEL_LIGHT);
-        back.addActionListener(e -> {
-            dispose();
-            new MainMenu();
-        });
+        back.addActionListener(e -> NavigationManager.get().showMainMenu());
         JPanel bottom = new JPanel();
         bottom.setBackground(Theme.BG_DARK);
         bottom.setBorder(new EmptyBorder(8, 16, 16, 16));
@@ -56,10 +57,10 @@ public class ShopScreen extends JFrame {
         add(bottom, BorderLayout.SOUTH);
 
         refresh();
-        setVisible(true);
     }
 
     private void refresh() {
+        if (coinsLabel == null) return;
         coinsLabel.setText("Монети: " + ProgressStore.get().getCoins());
         listPanel.removeAll();
         for (ShipSkin skin : ShipSkin.values()) {
