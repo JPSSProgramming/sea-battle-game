@@ -24,33 +24,33 @@ public class DailyChallengeScreenPanel extends JPanel {
         content.setBackground(Theme.BG_DARK);
         content.setBorder(new EmptyBorder(48, 48, 36, 48));
 
-        JLabel title = Theme.titleLabel("ЩОДЕННИЙ ВИКЛИК");
+        JLabel title = Theme.titleLabel("DAILY CHALLENGE");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 12, 0));
 
-        JLabel date = new JLabel("Дата: " + LocalDate.now(), SwingConstants.CENTER);
+        JLabel date = new JLabel("Date: " + LocalDate.now(), SwingConstants.CENTER);
         date.setFont(Theme.FONT_BODY);
         date.setForeground(Theme.TEXT_MUTED);
         date.setAlignmentX(Component.CENTER_ALIGNMENT);
         date.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        JLabel desc = new JLabel("<html><center>Один поєдинок на день, результат зберігається.<br>Змагання за часом!</center></html>", SwingConstants.CENTER);
+        JLabel desc = new JLabel("<html><center>One match per day, the result is saved.<br>Race against time!</center></html>", SwingConstants.CENTER);
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
         desc.setBorder(new EmptyBorder(0, 0, 32, 0));
 
-        JButton play = Theme.styledButton("Почати виклик", Theme.ACCENT_DARK);
+        JButton play = Theme.styledButton("Start a challenge", Theme.ACCENT_DARK);
         play.setAlignmentX(Component.CENTER_ALIGNMENT);
         play.setMaximumSize(new Dimension(280, 52));
         play.addActionListener(e -> startDailyChallenge());
 
-        JButton leaderboard = Theme.styledButton("Таблиця лідерів (демо)", Theme.BG_PANEL_LIGHT);
+        JButton leaderboard = Theme.styledButton("Leaderboard (demo)", Theme.BG_PANEL_LIGHT);
         leaderboard.setAlignmentX(Component.CENTER_ALIGNMENT);
         leaderboard.setMaximumSize(new Dimension(280, 52));
         leaderboard.addActionListener(e -> showLeaderboard());
 
-        JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
+        JButton back = Theme.styledButton("Back", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(280, 52));
         back.addActionListener(e -> NavigationManager.get().showMainMenu());
@@ -71,8 +71,8 @@ public class DailyChallengeScreenPanel extends JPanel {
     }
 
     private void startDailyChallenge() {
-        Player human = new Player("Гравець");
-        AI ai = new AI("Ворог (середньо)", Difficulty.MEDIUM);
+        Player human = new Player("Player");
+        AI ai = new AI("Enemy (medium)", Difficulty.MEDIUM);
         ai.autoPlaceShips();
 
         ShipPlacementPanel placement = new ShipPlacementPanel(human, () -> {
@@ -82,14 +82,14 @@ public class DailyChallengeScreenPanel extends JPanel {
                     GameStats.get().recordGame(true, 10, 85);
                     SoundManager.get().playVictory();
                     JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
-                            "Ви перемогли в щоденному виклику!",
-                            "Успіх", JOptionPane.INFORMATION_MESSAGE);
+                            "You won the daily challenge!",
+                            "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     GameStats.get().recordGame(false, 0, 0);
                     SoundManager.get().playDefeat();
                     JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
-                            "Спробуйте завтра в щоденному виклику!",
-                            "Результат", JOptionPane.WARNING_MESSAGE);
+                            "Try it tomorrow in the daily challenge!",
+                            "Result", JOptionPane.WARNING_MESSAGE);
                 }
                 NavigationManager.get().showMainMenu();
             });
@@ -100,14 +100,12 @@ public class DailyChallengeScreenPanel extends JPanel {
 
     private void showLeaderboard() {
         String[] leaders = {
-                "1. Олександр — 2:34",
-                "2. Марія — 3:12",
-                "3. Іван — 3:45"
+              //TODO test
         };
         StringBuilder sb = new StringBuilder("<html>");
         for (String l : leaders) sb.append(l).append("<br>");
         sb.append("</html>");
         JOptionPane.showMessageDialog(NavigationManager.get().getWindow(), sb.toString(),
-                "Таблиця лідерів на сьогодні", JOptionPane.INFORMATION_MESSAGE);
+                "Leaderboard for today", JOptionPane.INFORMATION_MESSAGE);
     }
 }
