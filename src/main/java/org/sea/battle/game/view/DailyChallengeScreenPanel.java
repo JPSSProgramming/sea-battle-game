@@ -7,41 +7,34 @@ import org.sea.battle.game.model.Player;
 import org.sea.battle.game.utils.GameStats;
 import org.sea.battle.game.utils.SoundManager;
 import org.sea.battle.game.utils.Theme;
-import java.awt.GraphicsEnvironment;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.LocalDate;
 
-public class DailyChallengeScreen extends JFrame {
+public class DailyChallengeScreenPanel extends JPanel {
 
-    public DailyChallengeScreen() {
-        setTitle("Щоденний виклик");
-        setSize(520, 420);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public DailyChallengeScreenPanel() {
         setLayout(new BorderLayout());
-        setUndecorated(true);
-        GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().setFullScreenWindow(this);
-        Theme.styleFrame(this);
+        setBackground(Theme.BG_DARK);
 
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(Theme.BG_DARK);
-        content.setBorder(new EmptyBorder(36, 48, 36, 48));
+        content.setBorder(new EmptyBorder(48, 48, 36, 48));
 
         JLabel title = Theme.titleLabel("ЩОДЕННИЙ ВИКЛИК");
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setBorder(new EmptyBorder(0, 0, 12, 0));
 
-        JLabel date = new JLabel("Дата: " + LocalDate.now());
+        JLabel date = new JLabel("Дата: " + LocalDate.now(), SwingConstants.CENTER);
         date.setFont(Theme.FONT_BODY);
         date.setForeground(Theme.TEXT_MUTED);
         date.setAlignmentX(Component.CENTER_ALIGNMENT);
         date.setBorder(new EmptyBorder(0, 0, 20, 0));
 
-        JLabel desc = new JLabel("<html><center>Щодня однакова карта для всіх гравців.<br>Один поєдинок, результат зберігається.<br>Змаганння за часом!</center></html>");
+        JLabel desc = new JLabel("<html><center>Один поєдинок на день, результат зберігається.<br>Змагання за часом!</center></html>", SwingConstants.CENTER);
         desc.setFont(Theme.FONT_BODY);
         desc.setForeground(Theme.TEXT_MUTED);
         desc.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -52,7 +45,7 @@ public class DailyChallengeScreen extends JFrame {
         play.setMaximumSize(new Dimension(280, 52));
         play.addActionListener(e -> startDailyChallenge());
 
-        JButton leaderboard = Theme.styledButton("Таблиця лідерів (імітація)", Theme.BG_PANEL_LIGHT);
+        JButton leaderboard = Theme.styledButton("Таблиця лідерів (демо)", Theme.BG_PANEL_LIGHT);
         leaderboard.setAlignmentX(Component.CENTER_ALIGNMENT);
         leaderboard.setMaximumSize(new Dimension(280, 52));
         leaderboard.addActionListener(e -> showLeaderboard());
@@ -60,8 +53,9 @@ public class DailyChallengeScreen extends JFrame {
         JButton back = Theme.styledButton("Назад", Theme.BG_PANEL_LIGHT);
         back.setAlignmentX(Component.CENTER_ALIGNMENT);
         back.setMaximumSize(new Dimension(280, 52));
-        back.addActionListener(e -> { dispose(); new MainMenu(); });
+        back.addActionListener(e -> NavigationManager.get().showMainMenu());
 
+        content.add(title);
         content.add(date);
         content.add(desc);
         content.add(play);
@@ -70,8 +64,10 @@ public class DailyChallengeScreen extends JFrame {
         content.add(Box.createVerticalStrut(20));
         content.add(back);
 
-        add(content, BorderLayout.CENTER);
-        setVisible(true);
+        JScrollPane scroll = new JScrollPane(content);
+        scroll.setBorder(null);
+        scroll.getViewport().setBackground(Theme.BG_DARK);
+        add(scroll, BorderLayout.CENTER);
     }
 
     private void startDailyChallenge() {
@@ -79,58 +75,39 @@ public class DailyChallengeScreen extends JFrame {
         AI ai = new AI("Ворог (середньо)", Difficulty.MEDIUM);
         ai.autoPlaceShips();
 
-        dispose();
-        new ShipPlacementScreen(human, () -> {
+        ShipPlacementPanel placement = new ShipPlacementPanel(human, () -> {
             GameLogic logic = new GameLogic(human, ai, false);
-            new GameWindow(logic, true, winner -> {
+            GamePanel gamePanel = new GamePanel(logic, true, winner -> {
                 if (winner == human) {
                     GameStats.get().recordGame(true, 10, 85);
                     SoundManager.get().playVictory();
-                    JOptionPane.showMessageDialog(null, "Ви перемогли в щоденному виклику!",
+                    JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
+                            "Ви перемогли в щоденному виклику!",
                             "Успіх", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     GameStats.get().recordGame(false, 0, 0);
                     SoundManager.get().playDefeat();
-                    JOptionPane.showMessageDialog(null, "Спробуйте завтра в щоденному виклику!",
+                    JOptionPane.showMessageDialog(NavigationManager.get().getWindow(),
+                            "Спробуйте завтра в щоденному виклику!",
                             "Результат", JOptionPane.WARNING_MESSAGE);
                 }
-                new MainMenu();
+                NavigationManager.get().showMainMenu();
             });
+            NavigationManager.get().showDynamic(gamePanel);
         });
+        NavigationManager.get().showDynamic(placement);
     }
 
     private void showLeaderboard() {
-        JDialog dialog = new JDialog(this, "Таблиця лідерів на сьогодні", true);
-        dialog.setSize(400, 300);
-        dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new BorderLayout());
-        Theme.styleFrame(dialog);
-
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBackground(Theme.BG_DARK);
-        content.setBorder(new EmptyBorder(16, 16, 16, 16));
-
         String[] leaders = {
-                "1. Олександр - 2:34",
-                "2. Марія - 3:12",
-                "3. Іван - 3:45"
+                "1. Олександр — 2:34",
+                "2. Марія — 3:12",
+                "3. Іван — 3:45"
         };
-
-        for (String leader : leaders) {
-            JLabel l = new JLabel(leader);
-            l.setFont(Theme.FONT_BODY);
-            l.setForeground(Theme.TEXT_PRIMARY);
-            l.setBorder(new EmptyBorder(8, 0, 8, 0));
-            content.add(l);
-        }
-
-        JButton close = Theme.styledButton("Закрити", Theme.BG_PANEL_LIGHT);
-        close.addActionListener(e -> dialog.dispose());
-        content.add(Box.createVerticalStrut(20));
-        content.add(close);
-
-        dialog.add(new JScrollPane(content));
-        dialog.setVisible(true);
+        StringBuilder sb = new StringBuilder("<html>");
+        for (String l : leaders) sb.append(l).append("<br>");
+        sb.append("</html>");
+        JOptionPane.showMessageDialog(NavigationManager.get().getWindow(), sb.toString(),
+                "Таблиця лідерів на сьогодні", JOptionPane.INFORMATION_MESSAGE);
     }
 }
