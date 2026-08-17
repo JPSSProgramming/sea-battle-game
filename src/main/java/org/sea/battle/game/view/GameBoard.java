@@ -2,6 +2,7 @@ package org.sea.battle.game.view;
 
 import org.sea.battle.game.model.Cell;
 import org.sea.battle.game.model.Ship;
+import org.sea.battle.game.utils.ParticleSystem;
 import org.sea.battle.game.utils.Theme;
 import org.sea.battle.game.utils.Utils;
 
@@ -19,6 +20,8 @@ public class GameBoard extends JPanel {
 
     public List<Cell> previewCells = null;
 
+    private final ParticleSystem particles = new ParticleSystem();
+
     public GameBoard() {
         this.cells = new Cell[Utils.BOARD_SIZE][Utils.BOARD_SIZE];
         this.ships = new ArrayList<>();
@@ -32,6 +35,8 @@ public class GameBoard extends JPanel {
         setBackground(Theme.BG_PANEL);
         setPreferredSize(new Dimension(Utils.BOARD_SIZE * Utils.CELL_SIZE, Utils.BOARD_SIZE * Utils.CELL_SIZE));
     }
+
+    public ParticleSystem getParticles() { return particles; }
 
     public Cell getCell(int x, int y) {
         if (!Utils.inBounds(x, y)) return null;
@@ -59,24 +64,12 @@ public class GameBoard extends JPanel {
         repaint();
     }
 
-    public List<Ship> getShips() {
-        return ships;
-    }
+    public List<Ship> getShips() { return ships; }
 
-    public void setShowShips(boolean v) {
-        this.showShips = v;
-        repaint();
-    }
+    public void setShowShips(boolean v) { this.showShips = v; repaint(); }
 
-    public void setPreviewCells(List<Cell> preview) {
-        this.previewCells = preview;
-        repaint();
-    }
-
-    public void clearPreview() {
-        this.previewCells = null;
-        repaint();
-    }
+    public void setPreviewCells(List<Cell> preview) { this.previewCells = preview; repaint(); }
+    public void clearPreview() { this.previewCells = null; repaint(); }
 
     public void setHoverCell(int x, int y) {
         if (hoverX == x && hoverY == y) return;
@@ -85,9 +78,7 @@ public class GameBoard extends JPanel {
         repaint();
     }
 
-    public void clearHover() {
-        setHoverCell(-1, -1);
-    }
+    public void clearHover() { setHoverCell(-1, -1); }
 
     public Ship findShipAt(int x, int y) {
         for (Ship s : ships) {
@@ -122,6 +113,13 @@ public class GameBoard extends JPanel {
                 g2.fillRoundRect(px + 2, py + 2, Utils.CELL_SIZE - 4, Utils.CELL_SIZE - 4, 8, 8);
             }
             g2.dispose();
+        }
+
+        if (particles.hasParticles()) {
+            Graphics2D pg = (Graphics2D) g.create();
+            pg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            particles.draw(pg);
+            pg.dispose();
         }
     }
 
