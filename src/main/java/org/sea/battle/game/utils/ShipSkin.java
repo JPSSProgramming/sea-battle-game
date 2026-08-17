@@ -3,12 +3,12 @@ package org.sea.battle.game.utils;
 import java.awt.Color;
 
 public enum ShipSkin {
-    CLASSIC("CLASSIC", "Класичний", 0, new Color(70, 80, 96), new Color(210, 215, 225)),
-    STEEL("STEEL", "Сталевий", 80, new Color(140, 150, 165), new Color(230, 235, 240)),
-    STEALTH("STEALTH", "Стелс", 150, new Color(20, 20, 25), new Color(90, 200, 190)),
-    NEON("NEON", "Неоновий", 200, new Color(20, 40, 60), new Color(60, 240, 220)),
-    GOLD("GOLD", "Золотий", 250, new Color(180, 140, 30), new Color(255, 225, 120)),
-    CRIMSON("CRIMSON", "Багряний флот", 300, new Color(120, 20, 30), new Color(255, 120, 120));
+    CLASSIC("CLASSIC", "CLASSIC", 0, new Color(70, 80, 96), new Color(210, 215, 225)),
+    STEEL("STEEL", "STEEL", 80, new Color(140, 150, 165), new Color(230, 235, 240)),
+    STEALTH("STEALTH", "STEALTH", 150, new Color(20, 20, 25), new Color(90, 200, 190)),
+    NEON("NEON", "NEON", 200, new Color(20, 40, 60), new Color(60, 240, 220)),
+    GOLD("GOLD", "GOLD", 250, new Color(180, 140, 30), new Color(255, 225, 120)),
+    CRIMSON("CRIMSON", "CRIMSON", 300, new Color(120, 20, 30), new Color(255, 120, 120));
 
     public final String id;
     public final String label;
