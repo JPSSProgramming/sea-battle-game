@@ -7,10 +7,10 @@ public class Utils {
 
     public static String shipTypeName(int size) {
         return switch (size) {
-            case 4 -> "Лінкор";
-            case 3 -> "Крейсер";
-            case 2 -> "Есмінець";
-            default -> "Катер";
+            case 4 -> "Battleship";
+            case 3 -> "Cruiser";
+            case 2 -> "Destroyer";
+            default -> "Cutter";
         };
     }
 
